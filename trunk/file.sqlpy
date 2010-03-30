@@ -1,0 +1,25 @@
+for i in range(0, 10):
+  print i,
+print
+  
+sql:
+  CREATE TABLE Customers ( 
+    name VARCHAR(100) 
+  )
+:sql
+  
+sql:
+  INSERT INTO Customers VALUES ('Phil')
+:sql
+
+sql:
+  INSERT INTO Customers VALUES ('Matthew')
+:sql
+
+sql:
+  INSERT INTO Customers VALUES ('Joaquin')
+:sql
+
+for a in range(0, 10):
+  print a,
+print
