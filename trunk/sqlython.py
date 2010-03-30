@@ -1,7 +1,7 @@
 ## Sources: http://www.mckoi.com/database/SQLSyntax.html
 ## Goal:
 ## To use SQL injection within python using RDL building techniques on dictionaries
-## and to perform sample operations:
+## and to perform additional sample operations on top of the full python library and the usual subset of SQL:
 ##   if sql:[TABLE]:
 ##   if i in sql:[TABLE][COLUMN]:
 ##   for i in sql:[TABLE][COLUMN]:
