@@ -6,17 +6,8 @@ sql:
   CREATE TABLE Customers ( 
     name VARCHAR(100) 
   )
-:sql
-  
-sql:
   INSERT INTO Customers VALUES ('Phil')
-:sql
-
-sql:
   INSERT INTO Customers VALUES ('Matthew')
-:sql
-
-sql:
   INSERT INTO Customers VALUES ('Joaquin')
 :sql
 

@@ -30,70 +30,70 @@ DEBUG = True
 
 class SQL:
   def __init__(self, database, sql_insert):
+    # Create class variable references
+    self.database = database
     self.sql_insert = sql_insert
+    
     if DEBUG: print self.sql_insert
 
-    # Create reference for database within SQL Class
-    self.database = database
-    
-    # Find SQL Command
-    case = self.sql_insert[0:self.sql_insert.find(' ')]
-    
-    
-    # Match SQL Command and begin parsing
-    if (case == 'CREATE'):
-      self.create()
-    elif (case == 'ALTER'):
-       self.alter()
-    elif (case == 'INSERT'):
-       self.insert()
-    else:
-      print 'NON-IMPLEMENTED SQL INSERTION: ' + case
-    print
+    while not self.sql_insert == '':
+      case = self.sql_insert[0:self.sql_insert.find(' ')]
+      if (case == 'CREATE'):
+        self.create()
+      elif (case == 'ALTER'):
+         self.alter()
+      elif (case == 'INSERT'):
+         self.insert()
+      else:
+        raise NameError('SQL statement incorrect or not yet supported: ' + case)
+      print
       
-  # CREATE
   def create(self):
-  
-    print self.sql_insert
-    item = self.parse(' ')
-    if item == 'TABLE':
-      # Create a table in the database with the name 'item_name'
-      item_name = self.parse(' ')
-      self.database[item_name] = {}
-      
+    re1='(CREATE)'	# Word 1
+    ws='(\\s+)'	# White Space 1
+    re3='(TABLE)'	# Word 2
+    var='((?:[a-z][a-z0-9_]*))'	# Variable Name 1
+    re7='(\\()'	# Any Single Character 1
+    re11='(VARCHAR)'	# Word 3
+    re12='(\\()'	# Any Single Character 2
+    re13='(\\d+)'	# Integer Number 1
+    re14='.*?'	# Non-greedy match on filler
+    re16='(\\))'	# Any Single Character 3
+
+    rg = re.compile(re1+ws+re3+ws+var+ws+re7+ws+var+ws+re11+re12+re13+re14+ws+re16,re.IGNORECASE|re.DOTALL)
+    m = rg.search(self.sql_insert)
+    if m:
+      table=m.group(5)
+      column=m.group(9)
+      varchar=m.group(11)
+      int=m.group(13)
+      self.sql_insert = self.sql_insert[len(m.group(0)):].strip()
+
       # Create a column in the database with the name 'column'
-      self.parse(' ')
-      column = self.parse(' ')
-      self.database[item_name] = []
-      self.database[item_name].append(column)
+      self.database[table] = []
+      self.database[table].append(column)
       
-      # ERROR: Assumes constraint to exist. (Runs on looking for '('.) FIX! Only for demo purpose.
-      constraint_type = self.parse('(')
-      
-      if not constraint_type == '': # If constraints exist
-        # Create special '_constraints' table
-        self.database[item_name + '_' + column[1:] + '_constraints'] = {}
-        
-        # Create VARCHAR constraint
-        if constraint_type == 'VARCHAR':
-          constraint_arg = self.parse(')')
-          self.database[item_name + '_' + column[1:] + '_constraints'][constraint_type] = constraint_arg[1:]
-          
+      # Create VARCHAR constraint
+      if varchar == 'VARCHAR':
+        if not table in self.database['constraints']:
+          self.database['constraints'][table] = {}
+        if not column in self.database['constraints'][table]:
+          self.database['constraints'][table][column] = {}
+        self.database['constraints'][table][column][varchar] = int
       if DEBUG: self.print_database()
+    else:
+      raise NameError('SQL statement incorrect or not yet supported:\n' + self.sql_insert)
     
-  # ALTER
   def alter(self):
     print 'ALTER'
     
-  # INSERT
   def insert(self):
-    # Parse statement
     re1='(INSERT)'	# Word 1
     ws='(\\s+)'	# White Space 1
     re3='(INTO)'	# Word 2
     re5='((?:[a-z][a-z0-9_]*))'	# Variable Name 1
     re7='(VALUES)'	# Word 3
-    re9='(\\(.*\\))'	# Round Braces 1
+    re9='(\\(.*?\\))'	# Round Braces 1
     braceCSVbrace='((\()(.*?),(.*)(\)))'
     end = '(' + re9 + '|' + braceCSVbrace + ')'
     remainder='.*?'
@@ -103,25 +103,14 @@ class SQL:
     if m:
       table = m.group(5)
       value = eval(m.group(9))
-      self.sql_insert = self.sql_insert[len(m.group(0)):]
-      
-      # Get column names for RDF
+      self.sql_insert = self.sql_insert[len(m.group(0)):].strip()
+
       columns = self.database[table]
-      
-      # Append the triple to the database
       for column in columns:
         self.database['triples'].append((table, column, value))
-      
       if DEBUG: self.print_database()
     else:
-      print self.sql_insert
       raise NameError('SQL statement incorrect or not yet supported:\n' + self.sql_insert)
-    
-  # Helper method for continous parsing
-  def parse(self, symbol):
-    item = self.sql_insert[0:self.sql_insert.find(symbol)]
-    self.sql_insert = self.sql_insert[self.sql_insert.find(symbol):].strip()
-    return (item)
     
   def print_database(self):
     print 'Database:'
@@ -131,7 +120,7 @@ class SQL:
 ########################################################################
 ########################################################################
 ## No need to modify code below this line.
-## EDIT: UNTIL INLINE SQL INJECTION QUERIES ARE HANDLED. EG FOR LOOPS
+## EDIT: UNTIL INLINE SQL INJECTION QUERIES ARE HANDLED. EG (FOR LOOPS)
 ########################################################################
 ########################################################################
 
@@ -148,6 +137,7 @@ class SQLinjection:
     self.filename = filename
     self.database = {}
     self.database['triples'] = []
+    self.database['constraints'] = {}
     self.python = ''
     
   def run(self):
