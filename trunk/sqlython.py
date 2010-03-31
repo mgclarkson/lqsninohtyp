@@ -1,4 +1,6 @@
 ## Sources: http://www.mckoi.com/database/SQLSyntax.html
+## Sources: http://txt2re.com
+## Sources: http://gskinner.com/RegExr or http://gskinner.com/RegExr/desktop
 ## Goal:
 ## To use SQL injection within python using RDL building techniques on dictionaries
 ## and to perform additional sample operations on top of the full python library and the usual subset of SQL:
@@ -46,40 +48,55 @@ class SQL:
          self.insert()
       else:
         raise NameError('SQL statement incorrect or not yet supported: ' + case)
-      print
+      if DEBUG: print
       
   def create(self):
     re1='(CREATE)'	# Word 1
     ws='(\\s+)'	# White Space 1
     re3='(TABLE)'	# Word 2
-    var='((?:[a-z][a-z0-9_]*))'	# Variable Name 1
-    re7='(\\()'	# Any Single Character 1
-    re11='(VARCHAR)'	# Word 3
-    re12='(\\()'	# Any Single Character 2
-    re13='(\\d+)'	# Integer Number 1
-    re14='.*?'	# Non-greedy match on filler
-    re16='(\\))'	# Any Single Character 3
+    re5='((?:[a-z][a-z0-9_]*))'	# Variable Name 1
+    re7='(\\(.*?\\(.*?\\)\\s+\\))'	# Round Braces 1
+    re8='(\\(.*?\\s+\\))'	# Round Braces 1
+    end = '(' + re7 + '|' + re8 + ')'
 
-    rg = re.compile(re1+ws+re3+ws+var+ws+re7+ws+var+ws+re11+re12+re13+re14+ws+re16,re.IGNORECASE|re.DOTALL)
+    rg = re.compile(re1+ws+re3+ws+re5+ws+end,re.IGNORECASE|re.DOTALL)
     m = rg.search(self.sql_insert)
     if m:
-      table=m.group(5)
-      column=m.group(9)
-      varchar=m.group(11)
-      int=m.group(13)
+      table = m.group(5)
+      list = m.group(7)
       self.sql_insert = self.sql_insert[len(m.group(0)):].strip()
-
-      # Create a column in the database with the name 'column'
-      self.database[table] = []
-      self.database[table].append(column)
-      
-      # Create VARCHAR constraint
-      if varchar == 'VARCHAR':
+      if not table in self.database:
+        self.database[table] = []
+      else:
+        raise NameError('Table already exists: ' + table)
+      list = list[1:-1].split(',')
+      for e in list:
+        el = e.split()
+        column = ''
+        constraint = ''
+        int = -1
+        for i in range(len(el)):
+          re9='.*?(\\(.*?\\)).*'	# Round Braces 1
+          rg = re.compile(re9,re.IGNORECASE|re.DOTALL)
+          m = rg.search(el[i])
+          if m:
+            constraint = el[i][0:el[i].find('(')],
+            int = m.group(1)[1:-1]
+          else:
+            if column == '':
+              column = el[i]
+            else:
+              constraint = el[i]
+        # Create a column in the database with the name 'column'
+        if not column in self.database[table]:
+          self.database[table].append(column)
+        else:
+          raise NameError('Column name already exists: ' + column)
         if not table in self.database['constraints']:
           self.database['constraints'][table] = {}
         if not column in self.database['constraints'][table]:
           self.database['constraints'][table][column] = {}
-        self.database['constraints'][table][column][varchar] = int
+        self.database['constraints'][table][column][constraint] = int
       if DEBUG: self.print_database()
     else:
       raise NameError('SQL statement incorrect or not yet supported:\n' + self.sql_insert)
@@ -96,9 +113,8 @@ class SQL:
     re9='(\\(.*?\\))'	# Round Braces 1
     braceCSVbrace='((\()(.*?),(.*)(\)))'
     end = '(' + re9 + '|' + braceCSVbrace + ')'
-    remainder='.*?'
 
-    rg = re.compile(re1+ws+re3+ws+re5+ws+re7+ws+end+remainder,re.IGNORECASE|re.DOTALL)
+    rg = re.compile(re1+ws+re3+ws+re5+ws+re7+ws+end,re.IGNORECASE|re.DOTALL)
     m = rg.search(self.sql_insert)
     if m:
       table = m.group(5)
@@ -106,8 +122,17 @@ class SQL:
       self.sql_insert = self.sql_insert[len(m.group(0)):].strip()
 
       columns = self.database[table]
-      for column in columns:
-        self.database['triples'].append((table, column, value))
+      if (isinstance(value, str) and len(columns) == 1):
+        for i in range(len(columns)):
+          self.database['triples'].append((table, columns[i], value))
+      elif (len(value) == len(columns)):
+        for i in range(len(columns)):
+          if not (table, columns[i], value[i]) in self.database['triples']:
+            self.database['triples'].append((table, columns[i], value[i]))
+          else:
+            print 'SQL: Redundant information attempted insertion. Database not updated.'
+      else:
+        raise NameError('SQL statement incorrect:\n' + self.sql_insert)
       if DEBUG: self.print_database()
     else:
       raise NameError('SQL statement incorrect or not yet supported:\n' + self.sql_insert)
@@ -191,15 +216,16 @@ class MainApp:
     app = SQLinjection(arg[0])
       
     # Format the output file to have print a blank line in the terminal first
-    python_code = '# clear new terminal line \nprint \n\n' + app.run()
+    python_code = app.run()
     
     # Write parsed and converted code to python file
     output = open(arg[1], 'w')
     output.write(python_code)
     output.close()
-    
+
     # Run new code
-    child = subprocess.Popen("python output.py")
+    execfile(arg[1])
+    # child = subprocess.Popen("python output.py")
     
 ########################################################################
 

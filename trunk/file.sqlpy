@@ -3,12 +3,28 @@ for i in range(0, 10):
 print
   
 sql:
-  CREATE TABLE Customers ( 
-    name VARCHAR(100) 
+  CREATE TABLE Firsts ( 
+    name VARCHAR(100)
   )
-  INSERT INTO Customers VALUES ('Phil')
-  INSERT INTO Customers VALUES ('Matthew')
-  INSERT INTO Customers VALUES ('Joaquin')
+  INSERT INTO Firsts VALUES ('Phil')
+  INSERT INTO Firsts VALUES ('Matthew')
+  INSERT INTO Firsts VALUES ('Joaquin')
+:sql
+
+sql:
+  CREATE TABLE Customers ( 
+    name VARCHAR(100) ,
+    last VARCHAR(10) 
+  )
+  INSERT INTO Customers VALUES ('Phil', 'Cannata')
+  INSERT INTO Customers VALUES ('Matthew', 'Clarkson')
+  INSERT INTO Customers VALUES ('Joaquin', 'Casares')
+:sql
+
+sql:
+  CREATE TABLE intVals ( 
+    val int
+  )
 :sql
 
 for a in range(0, 10):
