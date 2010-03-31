@@ -42,7 +42,6 @@ class SQL:
     
     # Match SQL Command and begin parsing
     if (case == 'CREATE'):
-      self.sql_insert = self.sql_insert[self.sql_insert.find(' '):].strip()
       self.create()
     elif (case == 'ALTER'):
        self.alter()
@@ -54,6 +53,8 @@ class SQL:
       
   # CREATE
   def create(self):
+  
+    print self.sql_insert
     item = self.parse(' ')
     if item == 'TABLE':
       # Create a table in the database with the name 'item_name'
