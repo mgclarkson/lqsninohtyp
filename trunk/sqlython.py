@@ -22,7 +22,7 @@ import os
 import subprocess
 import re
 
-DEBUG = False
+DEBUG = True
 
 ########################################################################
 
@@ -47,7 +47,7 @@ class SQL:
       elif (case == 'INSERT'):
          self.insert()
       else:
-        raise NameError('SQL statement incorrect or not yet supported: ' + case)
+        raise NameError('SQL: Statement incorrect or not yet supported: ' + case)
       if DEBUG: print
       
   def create(self):
@@ -68,7 +68,7 @@ class SQL:
       if not table in self.database:
         self.database[table] = []
       else:
-        raise NameError('Table already exists: ' + table)
+        raise NameError('SQL: Table already exists: ' + table)
       list = list[1:-1].split(',')
       for e in list:
         el = e.split()
@@ -80,7 +80,7 @@ class SQL:
           rg = re.compile(re9,re.IGNORECASE|re.DOTALL)
           m = rg.search(el[i])
           if m:
-            constraint = el[i][0:el[i].find('(')],
+            constraint = el[i][0:el[i].find('(')]
             int = m.group(1)[1:-1]
           else:
             if column == '':
@@ -91,7 +91,7 @@ class SQL:
         if not column in self.database[table]:
           self.database[table].append(column)
         else:
-          raise NameError('Column name already exists: ' + column)
+          raise NameError('SQL: Column name already exists: ' + column)
         if not table in self.database['constraints']:
           self.database['constraints'][table] = {}
         if not column in self.database['constraints'][table]:
@@ -99,7 +99,7 @@ class SQL:
         self.database['constraints'][table][column][constraint] = int
       if DEBUG: self.print_database()
     else:
-      raise NameError('SQL statement incorrect or not yet supported:\n' + self.sql_insert)
+      raise NameError('SQL: Statement incorrect or not yet supported:\n' + self.sql_insert)
     
   def alter(self):
     print 'ALTER'
@@ -122,27 +122,33 @@ class SQL:
       self.sql_insert = self.sql_insert[len(m.group(0)):].strip()
 
       columns = self.database[table]
-      if (isinstance(value, str) and len(columns) == 1):
-        for i in range(len(columns)):
-          if not (table, columns[i], value) in self.database['triples']:
-            self.database['triples'].append((table, columns[i], value))
-          else:
-            print 'SQL: Redundant information attempted insertion. Database not updated.'
+      if not ((isinstance(value, str) and len(columns) == 1) or (len(value) == len(columns))):
+        raise NameError('SQL: Statement incorrect:\n' + self.sql_insert)
+        
+      for i in range(len(columns)):
+        if (isinstance(value, str)):
+          data = value
+        else:
+          data = value[i]
+        if not (table, columns[i], data) in self.database['triples']:
+          if table in self.database['constraints'] and columns[i] in self.database['constraints'][table]:
+            type = self.database['constraints'][table][columns[i]].keys()[0]
+            type_val = self.database['constraints'][table][columns[i]][type]
+            if type == 'VARCHAR':
+              if len(data) > int(type_val):
+                data = data[0:int(type_val)]
+                print 'SQL: Inserted value trimmed to fit specified database limit: ' + data
+            if type == 'INT':
+              if not isinstance(int(data), int):
+                raise NameError('SQL: Incorrect data type. Expected an INT: ' + data)
+              data = int(data)
+            self.database['triples'].append((table, columns[i], data))
+        else:
+          print 'SQL: Redundant information attempted insertion. Database not updated.'
             
-      elif (len(value) == len(columns)):
-        for i in range(len(columns)):
-          if not (table, columns[i], value[i]) in self.database['triples']:
-            if table in self.database['constraints'] and columns[i] in self.database['constraints'][table] and value[i] in self.database['constraints'][table][columns[i]]:
-              print self.database['constraints'][table][columns[i]][value[i]]
-              self.database['triples'].append((table, columns[i], value[i]))
-          else:
-            print 'SQL: Redundant information attempted insertion. Database not updated.'
-            
-      else:
-        raise NameError('SQL statement incorrect:\n' + self.sql_insert)
       if DEBUG: self.print_database()
     else:
-      raise NameError('SQL statement incorrect or not yet supported:\n' + self.sql_insert)
+      raise NameError('SQL: Statement incorrect or not yet supported:\n' + self.sql_insert)
     
   def print_database(self):
     print 'Database:'

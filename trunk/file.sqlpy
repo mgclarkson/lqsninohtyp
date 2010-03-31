@@ -4,7 +4,7 @@ print
   
 sql:
   CREATE TABLE Firsts ( 
-    name VARCHAR(100)
+    name VARCHAR(5)
   )
   INSERT INTO Firsts VALUES ('Phil')
   INSERT INTO Firsts VALUES ('Matthew')
@@ -14,7 +14,7 @@ sql:
 sql:
   CREATE TABLE Customers ( 
     name VARCHAR(100) ,
-    last VARCHAR(10) 
+    last VARCHAR(7) 
   )
   INSERT INTO Customers VALUES ('Phil', 'Cannata')
   INSERT INTO Customers VALUES ('Matthew', 'Clarkson')
