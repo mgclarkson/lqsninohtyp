@@ -22,7 +22,7 @@ import os
 import subprocess
 import re
 
-DEBUG = True
+DEBUG = False
 
 ########################################################################
 
@@ -124,13 +124,20 @@ class SQL:
       columns = self.database[table]
       if (isinstance(value, str) and len(columns) == 1):
         for i in range(len(columns)):
-          self.database['triples'].append((table, columns[i], value))
+          if not (table, columns[i], value) in self.database['triples']:
+            self.database['triples'].append((table, columns[i], value))
+          else:
+            print 'SQL: Redundant information attempted insertion. Database not updated.'
+            
       elif (len(value) == len(columns)):
         for i in range(len(columns)):
           if not (table, columns[i], value[i]) in self.database['triples']:
-            self.database['triples'].append((table, columns[i], value[i]))
+            if table in self.database['constraints'] and columns[i] in self.database['constraints'][table] and value[i] in self.database['constraints'][table][columns[i]]:
+              print self.database['constraints'][table][columns[i]][value[i]]
+              self.database['triples'].append((table, columns[i], value[i]))
           else:
             print 'SQL: Redundant information attempted insertion. Database not updated.'
+            
       else:
         raise NameError('SQL statement incorrect:\n' + self.sql_insert)
       if DEBUG: self.print_database()
