@@ -18,6 +18,7 @@
 import sys
 import os
 import subprocess
+import re
 
 DEBUG = True
 
@@ -37,10 +38,11 @@ class SQL:
     
     # Find SQL Command
     case = self.sql_insert[0:self.sql_insert.find(' ')]
-    self.sql_insert = self.sql_insert[self.sql_insert.find(' '):].strip()
+    
     
     # Match SQL Command and begin parsing
     if (case == 'CREATE'):
+      self.sql_insert = self.sql_insert[self.sql_insert.find(' '):].strip()
       self.create()
     elif (case == 'ALTER'):
        self.alter()
@@ -48,7 +50,6 @@ class SQL:
        self.insert()
     else:
       print 'NON-IMPLEMENTED SQL INSERTION: ' + case
-    print self.sql_insert
     print
       
   # CREATE
@@ -86,19 +87,28 @@ class SQL:
   # INSERT
   def insert(self):
     # Parse statement
-    keyword = self.parse(' ')
-    table = self.parse(' ')
-    keyword = self.parse(' ')
-    value = self.parse(')')
-    value = value[1:].strip('\'')
-    
-    # Get column names for RDF
-    columns = self.database[table]
-    
-    # Append the triple to the database
-    self.database['triples'].append((table, columns[0], value))
-    
-    if DEBUG: self.print_database()
+    re1='(INSERT)'	# Word 1
+    ws='(\\s+)'	# White Space 1
+    re3='(INTO)'	# Word 2
+    re5='((?:[a-z][a-z0-9_]*))'	# Variable Name 1
+    re7='(VALUES)'	# Word 3
+    re9='(\\(.*\\))'	# Round Braces 1
+    remainder='.*?'
+
+    rg = re.compile(re1+ws+re3+ws+re5+ws+re7+ws+re9+remainder,re.IGNORECASE|re.DOTALL)
+    m = rg.search(self.sql_insert)
+    if m:
+      table = m.group(5)
+      value = eval(m.group(9))
+      # Get column names for RDF
+      columns = self.database[table]
+      
+      # Append the triple to the database
+      self.database['triples'].append((table, columns[0], value))
+      
+      if DEBUG: self.print_database()
+    else:
+      print 'ERROR!'
     
   # Helper method for continous parsing
   def parse(self, symbol):
