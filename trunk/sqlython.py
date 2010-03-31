@@ -29,41 +29,44 @@ DEBUG = True
 
 class SQL:
   def __init__(self, database, sql_insert):
-    if DEBUG: print sql_insert
+    self.sql_insert = sql_insert
+    if DEBUG: print self.sql_insert
 
     # Create reference for database within SQL Class
     self.database = database
     
     # Find SQL Command
-    case = sql_insert[0:sql_insert.find(' ')]
-    sql_insert = sql_insert[sql_insert.find(' '):].strip()
+    case = self.sql_insert[0:self.sql_insert.find(' ')]
+    self.sql_insert = self.sql_insert[self.sql_insert.find(' '):].strip()
     
     # Match SQL Command and begin parsing
     if (case == 'CREATE'):
-      self.create(sql_insert)
+      self.create()
     elif (case == 'ALTER'):
-       self.alter(sql_insert)
+       self.alter()
     elif (case == 'INSERT'):
-       self.insert(sql_insert)
+       self.insert()
     else:
       print 'NON-IMPLEMENTED SQL INSERTION: ' + case
+    print self.sql_insert
     print
       
   # CREATE
-  def create(self, sql_insert):
-    item, sql_insert = self.parse(sql_insert, ' ')
+  def create(self):
+    item = self.parse(' ')
     if item == 'TABLE':
       # Create a table in the database with the name 'item_name'
-      item_name, sql_insert = self.parse(sql_insert, ' ')
+      item_name = self.parse(' ')
       self.database[item_name] = {}
       
       # Create a column in the database with the name 'column'
-      column, sql_insert = self.parse(sql_insert, ' ')
+      self.parse(' ')
+      column = self.parse(' ')
       self.database[item_name] = []
-      self.database[item_name].append(column[1:])
+      self.database[item_name].append(column)
       
       # ERROR: Assumes constraint to exist. (Runs on looking for '('.) FIX! Only for demo purpose.
-      constraint_type, sql_insert = self.parse(sql_insert, '(')
+      constraint_type = self.parse('(')
       
       if not constraint_type == '': # If constraints exist
         # Create special '_constraints' table
@@ -71,22 +74,22 @@ class SQL:
         
         # Create VARCHAR constraint
         if constraint_type == 'VARCHAR':
-          constraint_arg, sql_insert = self.parse(sql_insert, ')')
+          constraint_arg = self.parse(')')
           self.database[item_name + '_' + column[1:] + '_constraints'][constraint_type] = constraint_arg[1:]
           
       if DEBUG: self.print_database()
     
   # ALTER
-  def alter(self, sql_insert):
+  def alter(self):
     print 'ALTER'
     
   # INSERT
-  def insert(self, sql_insert):
+  def insert(self):
     # Parse statement
-    keyword, sql_insert = self.parse(sql_insert, ' ')
-    table, sql_insert = self.parse(sql_insert, ' ')
-    keyword, sql_insert = self.parse(sql_insert, ' ')
-    value, sql_insert = self.parse(sql_insert, ')')
+    keyword = self.parse(' ')
+    table = self.parse(' ')
+    keyword = self.parse(' ')
+    value = self.parse(')')
     value = value[1:].strip('\'')
     
     # Get column names for RDF
@@ -98,10 +101,10 @@ class SQL:
     if DEBUG: self.print_database()
     
   # Helper method for continous parsing
-  def parse(self, sql_insert, symbol):
-    item = sql_insert[0:sql_insert.find(symbol)]
-    sql_insert = sql_insert[sql_insert.find(symbol):].strip()
-    return (item, sql_insert)
+  def parse(self, symbol):
+    item = self.sql_insert[0:self.sql_insert.find(symbol)]
+    self.sql_insert = self.sql_insert[self.sql_insert.find(symbol):].strip()
+    return (item)
     
   def print_database(self):
     print 'Database:'
@@ -139,7 +142,7 @@ class SQLinjection:
         sql_insert = ''
         line = file.readline()
         while not self.isEndTag(line): # Read insertion until EndTag
-          sql_insert += line.strip()
+          sql_insert += line.strip() + ' '
           line = file.readline()
         # Modigy database by SQL statement
         SQL(self.database, sql_insert)
