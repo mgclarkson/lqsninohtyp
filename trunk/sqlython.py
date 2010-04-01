@@ -14,6 +14,8 @@
 ## Handle line breaks as spaces and don't strip those
 ## Inline tags
 ## Multiple sql statements in a tag
+## Capitalization of keywords. Standardize.
+## 
 ## 
 ## 
 
@@ -31,21 +33,33 @@ DEBUG = True
 '''
 
 class SQL:
-  def __init__(self, database, sql_insert):
+  def __init__(self, parent, database, sql_insert):
     # Create class variable references
+    self.parent = parent
     self.database = database
     self.sql_insert = sql_insert
     
     if DEBUG: print self.sql_insert
 
     while not self.sql_insert == '':
-      case = self.sql_insert[0:self.sql_insert.find(' ')]
+      if self.sql_insert.find(' ') > -1:
+        case = self.sql_insert[0:self.sql_insert.find(' ')]
+      else:
+        case = self.sql_insert
       if (case == 'CREATE'):
         self.create()
       elif (case == 'ALTER'):
          self.alter()
       elif (case == 'INSERT'):
          self.insert()
+      elif (case == 'TRIPLES'):
+         print self.database['triples']
+         s =  ", ".join(map(str, self.database['triples']))
+         print s
+         # print self.python
+         parent.python += s
+         # print self.python
+         self.sql_insert = self.sql_insert[len(case):].strip()
       else:
         raise NameError('SQL: Statement incorrect or not yet supported: ' + case)
       if DEBUG: print
@@ -158,7 +172,6 @@ class SQL:
 ########################################################################
 ########################################################################
 ## No need to modify code below this line.
-## EDIT: UNTIL INLINE SQL INJECTION QUERIES ARE HANDLED. EG (FOR LOOPS)
 ########################################################################
 ########################################################################
 
@@ -183,28 +196,25 @@ class SQLinjection:
     line = file.readline()
     
     while line: # Read each line and identify sql insertions
-      if self.isBeginTag(line): # Handle insertion
-        sql_insert = ''
-        line = file.readline()
-        while not self.isEndTag(line): # Read insertion until EndTag
-          sql_insert += line.strip() + ' '
+      index = line.find(self.sql_insertion_tag)
+      if index > -1: # Handle insertion
+        self.python += line[0:index]
+        sql_insert = line[index + len(self.sql_insertion_tag):line.find(self.sql_insertion_end_tag)].strip()
+        index = line.find(self.sql_insertion_end_tag)
+        if index == -1:
           line = file.readline()
+          index = line.find(self.sql_insertion_end_tag)
+          while not index > -1: # Read insertion until EndTag
+            sql_insert += line.strip() + ' '
+            line = file.readline()
+            index = line.find(self.sql_insertion_end_tag)
         # Modigy database by SQL statement
-        SQL(self.database, sql_insert)
+        SQL(self, self.database, sql_insert)
+        self.python += line[index + len(self.sql_insertion_end_tag):]
       else: # Passively handle python text
-        self.python = self.python + line
+        self.python += line
       line = file.readline()
     return self.python
-      
-  # Helper function for if SQLinjection has begun
-  def isBeginTag(self, line):
-    if line.strip()[0:len(self.sql_insertion_tag)] == self.sql_insertion_tag:
-      return True
-  
-  # Helper function for if SQLinjection has ended
-  def isEndTag(self, line):
-    if line.strip()[0:len(self.sql_insertion_end_tag)] == self.sql_insertion_end_tag:
-      return True
         
 ########################################################################
 
@@ -222,23 +232,27 @@ class MainApp:
     arg = []
     try:
       arg.append(sys.argv[1])
-      arg.append(sys.argv[2])
     except:
-      print 'Usage: sqlpython.py input output'
+      print 'Usage: sqlpython.py input [output]'
       return
+      
     app = SQLinjection(arg[0])
       
     # Format the output file to have print a blank line in the terminal first
     python_code = app.run()
     
-    # Write parsed and converted code to python file
-    output = open(arg[1], 'w')
-    output.write(python_code)
-    output.close()
+    try:
+      arg.append(sys.argv[2])
+      
+      # Write parsed and converted code to python file
+      output = open(arg[1], 'w')
+      output.write(python_code)
+      output.close()
+    except:
+      tmp = 0
 
     # Run new code
-    execfile(arg[1])
-    # child = subprocess.Popen("python output.py")
+    exec python_code
     
 ########################################################################
 
