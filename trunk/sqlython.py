@@ -26,7 +26,8 @@ import os
 import subprocess
 import re
 
-DEBUG = True
+DEBUG = False
+# DEBUG = True
 
 ########################################################################
 
@@ -55,12 +56,8 @@ class SQL:
       elif (case == 'INSERT'):
          self.insert()
       elif (case == 'TRIPLES'):
-         print self.database['triples']
          s =  ", ".join(map(str, self.database['triples']))
-         print s
-         # print self.python
          parent.python += s
-         # print self.python
          self.sql_insert = self.sql_insert[len(case):].strip()
       else:
         raise NameError('SQL: Statement incorrect or not yet supported: ' + case)
@@ -152,8 +149,8 @@ class SQL:
             type_val = self.database['constraints'][table][columns[i]][type]
             if type == 'VARCHAR':
               if len(data) > int(type_val):
+                print 'SQL: Inserted value trimmed to fit specified database limit: ' + data[0:int(type_val)] + ' from: ' + data
                 data = data[0:int(type_val)]
-                print 'SQL: Inserted value trimmed to fit specified database limit: ' + data
             if type == 'INT':
               if not isinstance(int(data), int):
                 raise NameError('SQL: Incorrect data type. Expected an INT: ' + data)
