@@ -10,6 +10,8 @@
 ##   for i in sql:[TABLE]:
 ##   print sql:[TABLE]
 ##   
+## URGENT:
+## Verify triple structure
 ## FIX:
 ## Handle line breaks as spaces and don't strip those
 ## Inline tags
