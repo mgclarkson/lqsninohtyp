@@ -27,7 +27,7 @@ import subprocess
 import re
 
 DEBUG = False
-# DEBUG = True
+DEBUG = True
 
 ########################################################################
 
