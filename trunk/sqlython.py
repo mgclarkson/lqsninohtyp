@@ -4,7 +4,7 @@
 ## Goal:
 ## To use SQL injection within python using RDL building techniques on dictionaries
 ## and to perform additional sample operations on top of the full python library and the usual subset of SQL:
-##   if sql:[TABLE]:
+##   if i in sql:[TABLE]:
 ##   if i in sql:[TABLE][COLUMN]:
 ##   for i in sql:[TABLE][COLUMN]:
 ##   for i in sql:[TABLE]:
@@ -76,10 +76,12 @@ class SQL:
     m = rg.search(self.sql_insert)
     if m:
       table = m.group(5)
+      fields = table + '_fields'
       list = m.group(7)
       self.sql_insert = self.sql_insert[len(m.group(0)):].strip()
       if not table in self.database:
         self.database[table] = []
+        self.database[fields] = []
       else:
         raise NameError('SQL: Table already exists: ' + table)
       list = list[1:-1].split(',')
@@ -101,8 +103,8 @@ class SQL:
             else:
               constraint = el[i]
         # Create a column in the database with the name 'column'
-        if not column in self.database[table]:
-          self.database[table].append(column)
+        if not column in self.database[fields]:
+          self.database[fields].append(column)
         else:
           raise NameError('SQL: Column name already exists: ' + column)
         if not table in self.database['constraints']:
@@ -134,10 +136,11 @@ class SQL:
       value = eval(m.group(9))
       self.sql_insert = self.sql_insert[len(m.group(0)):].strip()
 
-      columns = self.database[table]
+      columns = self.database[table + '_fields']
       if not ((isinstance(value, str) and len(columns) == 1) or (len(value) == len(columns))):
         raise NameError('SQL: Statement incorrect:\n' + self.sql_insert)
         
+      self.database['current_record'] += 1
       for i in range(len(columns)):
         if (isinstance(value, str)):
           data = value
@@ -155,7 +158,9 @@ class SQL:
               if not isinstance(int(data), int):
                 raise NameError('SQL: Incorrect data type. Expected an INT: ' + data)
               data = int(data)
-            self.database['triples'].append((table, columns[i], data))
+            self.database['triples'].append((self.database['current_record'], columns[i], data))
+            if not self.database['current_record'] in self.database[table]:
+              self.database[table].append(self.database['current_record'])
         else:
           print 'SQL: Redundant information attempted insertion. Database not updated.'
             
@@ -165,7 +170,9 @@ class SQL:
     
   def print_database(self):
     print 'Database:'
-    for key in self.database:
+    keys = self.database.keys()
+    keys.sort()
+    for key in keys:
       print key, ':', self.database[key]
   
 ########################################################################
@@ -188,6 +195,7 @@ class SQLinjection:
     self.database = {}
     self.database['triples'] = []
     self.database['constraints'] = {}
+    self.database['current_record'] = 0
     self.python = ''
     
   def run(self):
