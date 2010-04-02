@@ -1,6 +1,9 @@
+## Sources: http://www.w3schools.com/sql/default.asp
 ## Sources: http://www.mckoi.com/database/SQLSyntax.html
-## Sources: http://txt2re.com
-## Sources: http://gskinner.com/RegExr or http://gskinner.com/RegExr/desktop
+## Sources: http://txt2re.com/index-python.php3
+## Sources: http://gskinner.com/RegExr
+## Sources: http://gskinner.com/RegExr/desktop
+##
 ## Goal:
 ## To use SQL injection within python using RDL building techniques on dictionaries
 ## and to perform additional sample operations on top of the full python library and the usual subset of SQL:
@@ -11,12 +14,13 @@
 ##   print sql:[TABLE]
 ##   
 ## URGENT:
-## Verify triple structure
+## None Currently
+## 
 ## FIX:
-## Handle line breaks as spaces and don't strip those
-## Inline tags
-## Multiple sql statements in a tag
-## Capitalization of keywords. Standardize.
+## Handle line breaks as spaces and don't strip those -J
+## Inline tags -J
+## Multiple sql statements in a tag -J
+## Capitalization of keywords. Standardize. -J
 ## 
 ## 
 ## 
