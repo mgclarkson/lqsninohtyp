@@ -2,6 +2,14 @@ for i in range(0, 10):
   print i,
 print
   
+# Now by doing placing a pound sign in front of a sql tag, the rest of the line
+# and following sql insertion will be ignored.
+
+# AND NO USING sql(COLON) inside of python comments, it still gets executed even if it's
+# under a python comment.
+
+#
+
 
 
 

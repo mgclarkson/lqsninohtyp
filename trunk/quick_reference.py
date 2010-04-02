@@ -1,4 +1,4 @@
-Quick Reference:
+Quick Reference: I named it a *.py for IDE color coding reasons.
 
 * self.NAME refers to a private variable kinda thing.
 * Also declaring takes place on the fly.

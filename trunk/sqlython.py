@@ -211,6 +211,7 @@ class SQLinjection:
       if index > -1: # Handle insertion
         self.python += line[0:index]
         sql_insert = line[index + len(self.sql_insertion_tag):line.find(self.sql_insertion_end_tag)].strip()
+        commented_sql_insert = line[line.find(self.sql_insertion_tag) - 1: line.find(self.sql_insertion_tag)] == '#'
         index = line.find(self.sql_insertion_end_tag)
         if index == -1:
           line = file.readline()
@@ -220,7 +221,8 @@ class SQLinjection:
             line = file.readline()
             index = line.find(self.sql_insertion_end_tag)
         # Modigy database by SQL statement
-        SQL(self, self.database, sql_insert)
+        if not commented_sql_insert:
+          SQL(self, self.database, sql_insert)
         self.python += line[index + len(self.sql_insertion_end_tag):]
       else: # Passively handle python text
         self.python += line
