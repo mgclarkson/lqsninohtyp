@@ -34,7 +34,7 @@ import subprocess
 import re
 
 DEBUG = False
-# DEBUG = True
+DEBUG = True
 
 ########################################################################
 
@@ -63,9 +63,10 @@ class SQL:
          self.insert()
       elif (case == 'ALTER'):
          self.alter()
+      elif (case == 'DROP'):
+         self.drop()
       elif (case == 'SELECT'):
          s = self.select()
-         # s =  ", ".join(map(str, s))
          parent.python += s
       elif (case == 'TRIPLES'):
          s =  ", ".join(map(str, self.database['triples']))
@@ -130,7 +131,51 @@ class SQL:
     
   def alter(self):
     print 'ALTER'
-    
+  
+  def drop(self):
+    re1='(DROP)'	# Variable Name 1
+    ws='(\\s+)'	# White Space 1
+    re3='(INDEX)'	# Variable Name 2
+    re5='((?:[a-z][a-z0-9_]*))'	# Variable Name 3
+    re7='(ON)'	# Word 1
+    re9='((?:[a-z][a-z0-9_]*))'	# Variable Name 4
+
+    rg = re.compile(re1+ws+re3+ws+re5+ws+re7+ws+re9,re.IGNORECASE|re.DOTALL)
+    m = rg.search(self.sql_insert)
+    if m:
+      column=m.group(5)
+      table=m.group(9)
+      self.sql_insert = self.sql_insert[len(m.group(0)):].strip()
+      
+      index = self.database[table + '_fields'].index(column)
+      if index > -1:
+        self.database[table + '_fields'].remove(column)
+        for trple in self.database['triples']:
+          for unique_id in self.database[table]:
+            if unique_id == trple[0] and column == trple[1]:
+              self.database['triples'].remove(trple)
+      else:
+        print 'Field: ' + column + 'does not exist. Table unchanged.'
+      if DEBUG: self.print_database()
+    else:
+      re1='(DROP)'	# Word 1
+      re2='(\\s+)'	# White Space 1
+      re3='(TABLE)'	# Word 2
+      re4='(\\s+)'	# White Space 2
+      re5='((?:[a-z][a-z0-9_]*))'	# Variable Name 1
+
+      rg = re.compile(re1+re2+re3+re4+re5,re.IGNORECASE|re.DOTALL)
+      m = rg.search(txt)
+      if m:
+          word1=m.group(1)
+          ws1=m.group(2)
+          word2=m.group(3)
+          ws2=m.group(4)
+          var1=m.group(5)
+          print "("+word1+")"+"("+ws1+")"+"("+word2+")"+"("+ws2+")"+"("+var1+")"+"\n"
+    else:
+      raise NameError('SQL: Statement incorrect or not yet supported:\n' + self.sql_insert)
+      
   def insert(self):
     re1='(INSERT)'	# Word 1
     ws='(\\s+)'	# White Space 1

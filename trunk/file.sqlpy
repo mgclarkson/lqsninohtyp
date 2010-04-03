@@ -58,6 +58,11 @@ SELECT *
 FROM Customers
 :sql
 
+sql: 
+DROP INDEX name ON Customers 
+DROP TABLE Customers
+:sql
+
 for a in range(0, 10):
   print a,
 print

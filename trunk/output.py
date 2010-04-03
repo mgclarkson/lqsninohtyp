@@ -27,6 +27,8 @@ print [['Phil', 'Cannata'], ['Matthew', 'Clarkso'], ['Joaquin', 'Casares']]
 
 print [['Phil', 'Cannata'], ['Matthew', 'Clarkso'], ['Joaquin', 'Casares']]
 
+
+
 for a in range(0, 10):
   print a,
 print
