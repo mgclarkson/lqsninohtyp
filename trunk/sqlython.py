@@ -159,6 +159,7 @@ class SQL:
           for unique_id in self.database[table]:
             if unique_id == trple[0] and column == trple[1]:
               self.database['triples'].remove(trple)
+      print self.database['constraints']
       else:
         print 'Field: ' + column + 'does not exist. Table unchanged.'
     elif drop_table:
