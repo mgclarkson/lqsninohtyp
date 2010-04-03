@@ -81,6 +81,7 @@ sql:
 :sql
 sql:
   SELECT DISTINCT name, last FROM Customers
+  SELECT DISTINCT name FROM Customers
 :sql
 
 
