@@ -7,12 +7,16 @@
 ## Goal:
 ## To use SQL injection within python using RDL building techniques on dictionaries
 ## and to perform additional sample operations on top of the full python library and the usual subset of SQL:
-##   if i in sql:[TABLE]:
-##   if i in sql:[TABLE][COLUMN]:sql
-##   for i in sql:[TABLE][COLUMN]:sql -J?
-##   for i in sql:[TABLE]:sql -J?
+##   if i in sql:[table]:sql  == if i in sql:CONTENTS SELECT * FROM table:sql -J
+##   if i in sql:[table][COLUMN]:sql == if i in sql:CONTENTS SELECT column FROM table:sql -J
+##   
+##   for i in sql:[table][COLUMN]:sql == for i in sql:SELECT column FROM table:sql -J
+##   for i in sql:[table]:sql  == for i in sql:SELECT * FROM table:sql -J
+##   
 ##   for i in sql:TRIPLES:sql -J
-##   print sql:PRINT SELECT...:sql -J
+##   for i in sql:CONTENTS SELECT * FROM table:sql -J
+##   
+##   print sql:PRINT SELECT * FROM table:sql -J
 ##   
 ##  TO IMPLEMENT:
 ##    CREATE TABLE -J
@@ -91,23 +95,28 @@ class SQL:
       if (case == 'CREATE'):
         self.create()
       elif (case == 'DROP'):
-         self.drop()
+        self.drop()
       elif (case == 'INSERT'):
-         self.insert()
+        self.insert()
       elif (case == 'SELECT'):
-         s = self.select()
-         parent.python += s
+        s = self.select()
+        parent.python += s
       elif (case == 'TRUNCATE'):
-         self.truncate()
+        self.truncate()
       elif (case == 'PRINT'):
         self.sql_insert = self.sql_insert[len(case):].strip()
         parent.python += self.print_select(self.select())
 
         # Non-standard SQL   
+      elif (case == 'CONTENTS'):
+        self.sql_insert = self.sql_insert[len(case):].strip()
+        s = self.select()
+        s = '[' + s.replace('[', '').replace(']', '') + ']'
+        parent.python += s
       elif (case == 'TRIPLES'):
-         s =  ", ".join(map(str, self.database['triples']))
-         parent.python += s
-         self.sql_insert = self.sql_insert[len(case):].strip()
+        s =  ", ".join(map(str, self.database['triples']))
+        parent.python += s
+        self.sql_insert = self.sql_insert[len(case):].strip()
       else:
         raise NameError('SQL: Statement incorrect or not yet supported: ' + case)
       if DEBUG: print

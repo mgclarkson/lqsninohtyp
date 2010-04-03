@@ -102,3 +102,19 @@ print
 for a in range(0, 10):
   print a,
 print
+
+for a in sql:SELECT * FROM Customers:sql :
+  print a
+print
+
+for a in sql:SELECT phone FROM Customers:sql :
+  print a
+print
+
+print 7735647 in sql:CONTENTS SELECT phone FROM Customers:sql
+print 7735647 in sql:CONTENTS SELECT * FROM Customers:sql
+print
+
+for i in sql:CONTENTS SELECT * FROM Customers:sql:
+  print i
+print

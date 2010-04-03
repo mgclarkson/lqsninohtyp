@@ -54,3 +54,19 @@ print
 for a in range(0, 10):
   print a,
 print
+
+for a in [['Phil', 'Cannata', 7735647], ['Matthew', 'Clarkson', 9875643], ['Joaquin', 'Casares', 3451878], ['Joaquin', 'Joaquin', 9345879], ['Joaquin', 'Joaquin', 5123789], ['Joaquin', 'Guadalupe', 8845748]] :
+  print a
+print
+
+for a in [[7735647], [9875643], [3451878], [9345879], [5123789], [8845748]] :
+  print a
+print
+
+print 7735647 in [7735647, 9875643, 3451878, 9345879, 5123789, 8845748]
+print 7735647 in ['Phil', 'Cannata', 7735647, 'Matthew', 'Clarkson', 9875643, 'Joaquin', 'Casares', 3451878, 'Joaquin', 'Joaquin', 9345879, 'Joaquin', 'Joaquin', 5123789, 'Joaquin', 'Guadalupe', 8845748]
+print
+
+for i in ['Phil', 'Cannata', 7735647, 'Matthew', 'Clarkson', 9875643, 'Joaquin', 'Casares', 3451878, 'Joaquin', 'Joaquin', 9345879, 'Joaquin', 'Joaquin', 5123789, 'Joaquin', 'Guadalupe', 8845748]:
+  print i
+print
