@@ -13,6 +13,26 @@
 ##   for i in sql:[TABLE]:
 ##   print sql:[TABLE]
 ##   
+##  TO IMPLEMENT:
+##    ALTER TABLE
+##    UPDATE 
+##    DELETE
+##    JOINS
+##    UNION 
+##    INSERT INTO
+##    WHERE
+##    WHERE (AND | OR)
+##    ORDER BY
+##    IN?
+##    BETWEEN?
+##    SELECT INTO
+##    CREATE INDEX
+##    DROP INDEX
+##    SELECT DISTINCT -J
+##    
+##    
+##    
+##  
 ## URGENT:
 ## None Currently
 ## 
@@ -59,17 +79,17 @@ class SQL:
       case = case.upper()
       if (case == 'CREATE'):
         self.create()
-      elif (case == 'INSERT'):
-         self.insert()
-      elif (case == 'ALTER'):
-         self.alter()
       elif (case == 'DROP'):
          self.drop()
+      elif (case == 'INSERT'):
+         self.insert()
       elif (case == 'SELECT'):
          s = self.select()
          parent.python += s
       elif (case == 'TRUNCATE'):
          self.truncate()
+         
+      # Non-standard SQL   
       elif (case == 'TRIPLES'):
          s =  ", ".join(map(str, self.database['triples']))
          parent.python += s
@@ -127,13 +147,10 @@ class SQL:
         if not column in self.database['constraints'][table]:
           self.database['constraints'][table][column] = {}
         self.database['constraints'][table][column][constraint.upper()] = int
-      if DEBUG: self.print_database()
     else:
       raise NameError('SQL: Statement incorrect or not yet supported:\n' + self.sql_insert)
-    
-  def alter(self):
-    print 'ALTER'
-  
+    if DEBUG: self.print_database()
+      
   def drop(self):
     re1='(DROP)'	# Variable Name 1
     ws='(\\s+)'	# White Space 1
@@ -225,10 +242,9 @@ class SQL:
               self.database[table].append(self.database['current_record'])
         else:
           print 'SQL: Redundant information attempted insertion. Database not updated.'
-            
-      if DEBUG: self.print_database()
     else:
       raise NameError('SQL: Statement incorrect or not yet supported:\n' + self.sql_insert)
+    if DEBUG: self.print_database()
     
   def select(self):
     re1='(SELECT)'	# Word 1
@@ -237,13 +253,23 @@ class SQL:
     re3='(FROM)'	# Word 2
     re4='((?:[a-z][a-z0-9_]*))'	# Variable Name 1
 
-    rg = re.compile(re1+ws+re2+ws+re3+ws+re4,re.IGNORECASE|re.DOTALL)
-    m = rg.search(self.sql_insert)
-    if m:
-      selection = m.group(3)
-      table = m.group(7)
-      self.sql_insert = self.sql_insert[len(m.group(0)):].strip()
-      
+    re12='(SELECT\\s+DISTINCT)'	# Word 1
+    
+    rg1 = re.compile(re1+ws+re2+ws+re3+ws+re4,re.IGNORECASE|re.DOTALL)
+    m = rg1.search(self.sql_insert)
+    
+    rg1 = re.compile(re12+ws+re2+ws+re3+ws+re4,re.IGNORECASE|re.DOTALL)
+    distinct = rg1.search(self.sql_insert)
+    if m or distinct:
+      if m:
+        selection = m.group(3)
+        table = m.group(7)
+        self.sql_insert = self.sql_insert[len(m.group(0)):].strip()
+      if distinct:
+        selection = distinct.group(3)
+        table = distinct.group(7)
+        self.sql_insert = self.sql_insert[len(distinct.group(0)):].strip()
+        
       if selection == '*':
         selection = self.database[table + '_fields']
       
@@ -263,10 +289,14 @@ class SQL:
                 row_results[unique_id].append(trple[2])
       for unique_id in row_results:
         table_results.append(row_results[unique_id])
-      if DEBUG: print table_results
-      return str(table_results)
+      if distinct:
+        noDupes = [] 
+        [noDupes.append(i) for i in table_results if not noDupes.count(i)] 
+        table_results = noDupes
     else:
       raise NameError('SQL: Statement incorrect or not yet supported:\n' + self.sql_insert)
+    if DEBUG: print table_results
+    return str(table_results)
 
   def truncate(self):
     re1='(TRUNCATE)'	# Word 1

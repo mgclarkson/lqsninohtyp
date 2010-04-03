@@ -66,6 +66,24 @@ DROP TABLE Nope
 TRUNCATE TABLE Firsts
 :sql
 
+sql:
+  CREATE TABLE Customers ( 
+    name VARCHAR(100) ,
+    last VARCHAR(15),
+    phone int
+  )
+  INSERT INTO Customers VALUES ('Phil', 'Cannata', 7735647)
+  INSERT INTO Customers VALUES ('Matthew', 'Clarkson', 9875643)
+  INSERT INTO Customers VALUES ('Joaquin', 'Casares', 3451878)
+  INSERT INTO Customers VALUES ('Joaquin', 'Joaquin', 9345879)
+  INSERT INTO Customers VALUES ('Joaquin', 'Joaquin', 5123789)
+  INSERT INTO Customers VALUES ('Joaquin', 'Guadalupe', 8845748)
+:sql
+sql:
+  SELECT DISTINCT name, last FROM Customers
+:sql
+
+
 for a in range(0, 10):
   print a,
 print
