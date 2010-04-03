@@ -14,13 +14,20 @@
 ##   print sql:[TABLE]
 ##   
 ##  TO IMPLEMENT:
+##    CREATE TABLE -J
+##    DROP INDEX -J
+##    DROP TABLE -J
+##    INSERT -J
+##    SELECT -J
+##    SELECT DISTINCT -J
+##    SELECT WHERE -J
+##    TRUNCATE TABLE -J
 ##    ALTER TABLE
 ##    UPDATE 
 ##    DELETE
 ##    JOINS
 ##    UNION 
 ##    INSERT INTO
-##    WHERE
 ##    WHERE (AND | OR)
 ##    ORDER BY
 ##    IN?
@@ -28,10 +35,11 @@
 ##    SELECT INTO
 ##    CREATE INDEX
 ##    DROP INDEX
-##    SELECT DISTINCT -J
 ##    
 ##    
 ##    
+##  NOTES:
+##  Between, In, and Like SQL operators will not be implemented in this version.
 ##  
 ## URGENT:
 ## None Currently
@@ -54,7 +62,7 @@ import subprocess
 import re
 
 DEBUG = False
-DEBUG = True
+# DEBUG = True
 
 ########################################################################
 
@@ -249,17 +257,25 @@ class SQL:
   def select(self):
     re1='(SELECT)'	# Word 1
     ws='(\\s+)'	# White Space 1
-    re2='((?:[a-z][a-z0-9_]*,?\s?[a-z][a-z0-9_]*)|\*)'	# Variable Name 1
+    re2='((?:[a-z][a-z0-9_]*,?\s?)*|\*)'	# Variable Name 1
     re3='(FROM)'	# Word 2
     re4='((?:[a-z][a-z0-9_]*))'	# Variable Name 1
 
     re12='(SELECT\\s+DISTINCT)'	# Word 1
     
-    rg1 = re.compile(re1+ws+re2+ws+re3+ws+re4,re.IGNORECASE|re.DOTALL)
-    m = rg1.search(self.sql_insert)
+    re13='(WHERE)'	# Word 1
+    re53='(.*?)'	# Variable Name 2
+    re43='((?:[a-z0-9_]*))'	# Variable Name 1
     
-    rg1 = re.compile(re12+ws+re2+ws+re3+ws+re4,re.IGNORECASE|re.DOTALL)
-    distinct = rg1.search(self.sql_insert)
+    rg = re.compile(re1+ws+re2+ws+re3+ws+re4,re.IGNORECASE|re.DOTALL)
+    m = rg.search(self.sql_insert)
+    
+    rg = re.compile(re12+ws+re2+ws+re3+ws+re4,re.IGNORECASE|re.DOTALL)
+    distinct = rg.search(self.sql_insert)
+    
+    rg = re.compile(re13+ws+re4+ws+re53+ws+re43,re.IGNORECASE|re.DOTALL)
+    where = rg.search(self.sql_insert)
+    
     if m or distinct:
       if distinct:
         selection = distinct.group(3)
@@ -268,6 +284,12 @@ class SQL:
       elif m:
         selection = m.group(3)
         table = m.group(7)
+        self.sql_insert = self.sql_insert[len(m.group(0)):].strip()
+        
+      if where:
+        comp_column=where.group(3)
+        operator=where.group(5)
+        value=where.group(7)
         self.sql_insert = self.sql_insert[len(m.group(0)):].strip()
         
       if selection == '*':
@@ -286,9 +308,19 @@ class SQL:
               if column.strip() == trple[1]:
                 if not unique_id in row_results:
                   row_results[unique_id] = []
-                row_results[unique_id].append(trple[2])
+                if not where:
+                  row_results[unique_id].append(trple[2])
+                else:
+                  if trple[1] == comp_column:
+                    if eval(str(trple[2]) + ' ' + operator + ' ' +  str(value)):
+                      row_results[unique_id].append(trple[2])
+                    else:
+                      row_results[unique_id] = None
+                  elif not row_results[unique_id] == None:
+                    row_results[unique_id].append(trple[2])
       for unique_id in row_results:
-        table_results.append(row_results[unique_id])
+        if not row_results[unique_id] == None:
+          table_results.append(row_results[unique_id])
       if distinct:
         noDupes = [] 
         [noDupes.append(i) for i in table_results if not noDupes.count(i)] 

@@ -81,9 +81,17 @@ sql:
 :sql
 sql:
   SELECT DISTINCT name, last FROM Customers
+:sql
+sql:
   SELECT DISTINCT name FROM Customers
 :sql
+sql:
+  SELECT name, last, phone FROM Customers WHERE phone > 6001234
+:sql
 
+sql:
+  SELECT name, last, phone FROM Customers WHERE phone <> 7735647
+:sql
 
 for a in range(0, 10):
   print a,
