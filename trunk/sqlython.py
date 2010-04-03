@@ -76,6 +76,7 @@ class SQL:
     self.parent = parent
     self.database = database
     self.sql_insert = sql_insert
+    self.last_selection = []
     
     if DEBUG: print self.sql_insert
 
@@ -96,6 +97,32 @@ class SQL:
          parent.python += s
       elif (case == 'TRUNCATE'):
          self.truncate()
+      elif (case == 'PRINT'):
+        self.sql_insert = self.sql_insert[len(case):].strip()
+        s = self.select()
+        
+        width = 17
+        toReturn = 'print \'-'
+        for i in range(len(eval(s)[0])):
+          toReturn += str('').ljust(width, '-')
+        toReturn += '\'\nprint \'|'
+        for col in self.last_selection:
+          toReturn +=  str('').ljust(2) + str(col).ljust(width - 3) + '|'
+        toReturn += '\'\nprint \''
+        toReturn += '-'
+        for i in range(len(eval(s)[0])):
+          toReturn += str('').ljust(width, '-')
+        toReturn += '\'\nprint \''
+        for row in eval(s):
+          toReturn += '|'
+          for col in row:
+            toReturn +=  str('').ljust(2) + str(col).ljust(width - 3) + '|'
+          toReturn += '\'\nprint \''
+        toReturn += '-'
+        for i in range(len(eval(s)[0])):
+          toReturn += str('').ljust(width, '-')
+        toReturn += '\'\n'
+        parent.python += toReturn
          
       # Non-standard SQL   
       elif (case == 'TRIPLES'):
@@ -294,16 +321,17 @@ class SQL:
         
       if selection == '*':
         selection = self.database[table + '_fields']
-      
+      if isinstance(selection, str):
+        selection_list = selection.split(',')
+      else:
+        selection_list = selection
+      self.last_selection = selection_list
+        
       table_results = []
       row_results = {}
       for trple in self.database['triples']:
         for unique_id in self.database[table]:
           if unique_id == trple[0]:
-            if isinstance(selection, str):
-              selection_list = selection.split(',')
-            else:
-              selection_list = selection
             for column in selection_list:
               if column.strip() == trple[1]:
                 if not unique_id in row_results:
@@ -394,7 +422,7 @@ class SQLinjection:
       index = line.find(self.sql_insertion_tag)
       if index > -1: # Handle insertion
         self.python += line[0:index]
-        sql_insert = line[index + len(self.sql_insertion_tag):line.find(self.sql_insertion_end_tag)].strip()
+        sql_insert = line[index + len(self.sql_insertion_tag):line.find(self.sql_insertion_end_tag)].strip() + ' '
         commented_sql_insert = line[line.find(self.sql_insertion_tag) - 1: line.find(self.sql_insertion_tag)] == '#'
         index = line.find(self.sql_insertion_end_tag)
         if index == -1:
@@ -406,7 +434,7 @@ class SQLinjection:
             index = line.find(self.sql_insertion_end_tag)
         # Modigy database by SQL statement
         if not commented_sql_insert:
-          SQL(self, self.database, sql_insert)
+          SQL(self, self.database, sql_insert.strip())
         self.python += line[index + len(self.sql_insertion_end_tag):]
       else: # Passively handle python text
         self.python += line

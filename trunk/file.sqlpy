@@ -93,6 +93,10 @@ sql:
   SELECT name, last, phone FROM Customers WHERE phone <> 7735647
 :sql
 
+sql: PRINT SELECT *
+FROM Customers
+:sql
+
 for a in range(0, 10):
   print a,
 print
