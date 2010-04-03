@@ -18,7 +18,7 @@
 ##   
 ##   print sql:PRINT SELECT * FROM table:sql -J
 ##   
-##  TO IMPLEMENT:
+##  COMMANDS:
 ##    CREATE TABLE -J
 ##    DROP INDEX -J
 ##    DROP TABLE -J
@@ -30,21 +30,40 @@
 ##    ALTER TABLE
 ##    UPDATE 
 ##    DELETE
-##    JOINS
+##    JOINS(4)
 ##    UNION 
 ##    INSERT INTO
-##    WHERE (AND | OR)
-##    ORDER BY
-##    IN?
-##    BETWEEN?
+##    WHERE (AND | OR) in WHERE -J'll do
+##    ORDER BY in SELECT -J'll do
+##    TOP in SELECT -J'll do
+##    LIKE in WHERE -J'll do
+##    IN in WHERE -J'll do
+##    BETWEEN in WHERE -J'll do
+##    ALIAS?
 ##    SELECT INTO
+##    CONSTRAINTS(6) in CREATE -J'll do
 ##    CREATE INDEX
 ##    DROP INDEX
+##    INCREMENT in CREATE & INSERT -J'll do
+##    VIEWS?
+##    NULL in WHERE & INSERT -J'll do
 ##    
+##  DATATYPES in CREATE & INSERT:
+##    char(n)
+##    text
+##    bit
+##    bigint
+##    real
+##    date?
+##    time?
+##    datetime?
 ##    
+##  NOT IMPLEMETING:
+##    CREATE DB
+##    DATES()
 ##    
 ##  NOTES:
-##  Between, In, and Like SQL operators will not be implemented in this version.
+##  Between, In, and Like SQL operators are not yet implemented in WHERE.
 ##  
 ## URGENT:
 ## None Currently
@@ -107,7 +126,7 @@ class SQL:
         self.sql_insert = self.sql_insert[len(case):].strip()
         parent.python += self.print_select(self.select())
 
-        # Non-standard SQL   
+      # Non-standard SQL   
       elif (case == 'CONTENTS'):
         self.sql_insert = self.sql_insert[len(case):].strip()
         s = self.select()
