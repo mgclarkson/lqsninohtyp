@@ -159,7 +159,7 @@ class SQL:
           for unique_id in self.database[table]:
             if unique_id == trple[0] and column == trple[1]:
               self.database['triples'].remove(trple)
-      print self.database['constraints']
+        del self.database['constraints'][table][column]
       else:
         print 'Field: ' + column + 'does not exist. Table unchanged.'
     elif drop_table:
@@ -171,6 +171,7 @@ class SQL:
             self.database['triples'].remove(trple)
       del self.database[table + '_fields']
       del self.database[table]
+      del self.database['constraints'][table]
     else:
       raise NameError('SQL: Statement incorrect or not yet supported:\n' + self.sql_insert)
     if DEBUG: self.print_database()
