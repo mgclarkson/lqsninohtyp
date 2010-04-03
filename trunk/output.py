@@ -30,7 +30,7 @@ print [['Phil', 'Cannata'], ['Matthew', 'Clarkso'], ['Joaquin', 'Casares']]
 
 
 
-[['Phil', 'Cannata'], ['Matthew', 'Clarkson'], ['Joaquin', 'Casares'], ['Joaquin', 'Joaquin'], ['Joaquin', 'Guadalupe']]
+[['Phil', 'Cannata'], ['Matthew', 'Clarkson'], ['Joaquin', 'Casares'], ['Joaquin', 'Joaquin'], ['Joaquin', 'Guadalupe']][['Phil'], ['Matthew'], ['Joaquin']]
 
 
 for a in range(0, 10):

@@ -261,14 +261,14 @@ class SQL:
     rg1 = re.compile(re12+ws+re2+ws+re3+ws+re4,re.IGNORECASE|re.DOTALL)
     distinct = rg1.search(self.sql_insert)
     if m or distinct:
-      if m:
-        selection = m.group(3)
-        table = m.group(7)
-        self.sql_insert = self.sql_insert[len(m.group(0)):].strip()
       if distinct:
         selection = distinct.group(3)
         table = distinct.group(7)
         self.sql_insert = self.sql_insert[len(distinct.group(0)):].strip()
+      elif m:
+        selection = m.group(3)
+        table = m.group(7)
+        self.sql_insert = self.sql_insert[len(m.group(0)):].strip()
         
       if selection == '*':
         selection = self.database[table + '_fields']
