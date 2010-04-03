@@ -60,7 +60,10 @@ FROM Customers
 
 sql: 
 DROP INDEX name ON Customers 
+DROP INDEX blah ON Customers 
 DROP TABLE Customers
+DROP TABLE Nope
+TRUNCATE TABLE Firsts
 :sql
 
 for a in range(0, 10):

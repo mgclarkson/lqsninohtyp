@@ -68,6 +68,8 @@ class SQL:
       elif (case == 'SELECT'):
          s = self.select()
          parent.python += s
+      elif (case == 'TRUNCATE'):
+         self.truncate()
       elif (case == 'TRIPLES'):
          s =  ", ".join(map(str, self.database['triples']))
          parent.python += s
@@ -152,8 +154,7 @@ class SQL:
       table=drop_field.group(9)
       self.sql_insert = self.sql_insert[len(drop_field.group(0)):].strip()
       
-      index = self.database[table + '_fields'].index(column)
-      if index > -1:
+      if column in self.database[table + '_fields']:
         self.database[table + '_fields'].remove(column)
         for trple in self.database['triples']:
           for unique_id in self.database[table]:
@@ -161,17 +162,21 @@ class SQL:
               self.database['triples'].remove(trple)
         del self.database['constraints'][table][column]
       else:
-        print 'Field: ' + column + 'does not exist. Table unchanged.'
+        print 'Field: ' + column + ' does not exist. Table unchanged.'
     elif drop_table:
       table=drop_table.group(5)
       self.sql_insert = self.sql_insert[len(drop_table.group(0)):].strip()
-      for unique_id in self.database[table]:
-        for trple in self.database['triples']:
-          if unique_id == trple[0]:
-            self.database['triples'].remove(trple)
-      del self.database[table + '_fields']
-      del self.database[table]
-      del self.database['constraints'][table]
+      
+      if table in self.database:
+        for unique_id in self.database[table]:
+          for trple in self.database['triples']:
+            if unique_id == trple[0]:
+              self.database['triples'].remove(trple)
+        del self.database[table + '_fields']
+        del self.database[table]
+        del self.database['constraints'][table]
+      else:
+        print 'Table: ' + table + ' does not exist. Database unchanged.'
     else:
       raise NameError('SQL: Statement incorrect or not yet supported:\n' + self.sql_insert)
     if DEBUG: self.print_database()
@@ -263,6 +268,32 @@ class SQL:
     else:
       raise NameError('SQL: Statement incorrect or not yet supported:\n' + self.sql_insert)
 
+  def truncate(self):
+    re1='(TRUNCATE)'	# Word 1
+    ws='(\\s+)'	# White Space 1
+    re3='(TABLE)'	# Word 2
+    re5='((?:[a-z][a-z0-9_]*))'	# Variable Name 1
+
+    rg = re.compile(re1+ws+re3+ws+re5,re.IGNORECASE|re.DOTALL)
+    m = rg.search(self.sql_insert)
+    if m:
+      table=m.group(5)
+      self.sql_insert = self.sql_insert[len(m.group(0)):].strip()
+      
+      if table in self.database:
+        for unique_id in self.database[table]:
+          for trple in self.database['triples']:
+            if unique_id == trple[0]:
+              self.database['triples'].remove(trple)
+        self.database[table + '_fields'] = []
+        self.database[table] = []
+        del self.database['constraints'][table]
+      else:
+        print 'Table: ' + table + ' does not exist. Database unchanged.'
+    else:
+      raise NameError('SQL: Statement incorrect or not yet supported:\n' + self.sql_insert)
+    if DEBUG: self.print_database()
+  
   def print_database(self):
     print 'Database:'
     keys = self.database.keys()
