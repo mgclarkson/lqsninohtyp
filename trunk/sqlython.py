@@ -8,10 +8,11 @@
 ## To use SQL injection within python using RDL building techniques on dictionaries
 ## and to perform additional sample operations on top of the full python library and the usual subset of SQL:
 ##   if i in sql:[TABLE]:
-##   if i in sql:[TABLE][COLUMN]:
-##   for i in sql:[TABLE][COLUMN]:
-##   for i in sql:[TABLE]:
-##   print sql:[TABLE]
+##   if i in sql:[TABLE][COLUMN]:sql
+##   for i in sql:[TABLE][COLUMN]:sql -J?
+##   for i in sql:[TABLE]:sql -J?
+##   for i in sql:TRIPLES:sql -J
+##   print sql:PRINT SELECT...:sql -J
 ##   
 ##  TO IMPLEMENT:
 ##    CREATE TABLE -J
