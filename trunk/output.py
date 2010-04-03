@@ -36,17 +36,20 @@ print [['Phil', 'Cannata'], ['Matthew', 'Clarkso'], ['Joaquin', 'Casares']]
 
 [['Matthew', 'Clarkson', 9875643], ['Joaquin', 'Casares', 3451878], ['Joaquin', 'Joaquin', 9345879], ['Joaquin', 'Joaquin', 5123789], ['Joaquin', 'Guadalupe', 8845748]]
 
-print '----------------------------------------------------'
+print
+print 'Customers:'
+print '|---------------------------------------------------'
 print '|  name          |  last          |  phone         |'
-print '|----------------------------------------------------'
-print '||  Phil          |  Cannata       |  7735647       |'
-print '||  Matthew       |  Clarkson      |  9875643       |'
-print '||  Joaquin       |  Casares       |  3451878       |'
-print '||  Joaquin       |  Joaquin       |  9345879       |'
-print '||  Joaquin       |  Joaquin       |  5123789       |'
-print '||  Joaquin       |  Guadalupe     |  8845748       |'
-print '|----------------------------------------------------'
+print '|---------------------------------------------------'
+print '|  Phil          |  Cannata       |  7735647       |'
+print '|  Matthew       |  Clarkson      |  9875643       |'
+print '|  Joaquin       |  Casares       |  3451878       |'
+print '|  Joaquin       |  Joaquin       |  9345879       |'
+print '|  Joaquin       |  Joaquin       |  5123789       |'
+print '|  Joaquin       |  Guadalupe     |  8845748       |'
+print '|---------------------------------------------------'
 
+print
 
 for a in range(0, 10):
   print a,

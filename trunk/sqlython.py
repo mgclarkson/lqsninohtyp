@@ -76,6 +76,7 @@ class SQL:
     self.parent = parent
     self.database = database
     self.sql_insert = sql_insert
+    self.last_table = ''
     self.last_selection = []
     
     if DEBUG: print self.sql_insert
@@ -99,32 +100,9 @@ class SQL:
          self.truncate()
       elif (case == 'PRINT'):
         self.sql_insert = self.sql_insert[len(case):].strip()
-        s = self.select()
-        
-        width = 17
-        toReturn = 'print \'-'
-        for i in range(len(eval(s)[0])):
-          toReturn += str('').ljust(width, '-')
-        toReturn += '\'\nprint \'|'
-        for col in self.last_selection:
-          toReturn +=  str('').ljust(2) + str(col).ljust(width - 3) + '|'
-        toReturn += '\'\nprint \''
-        toReturn += '-'
-        for i in range(len(eval(s)[0])):
-          toReturn += str('').ljust(width, '-')
-        toReturn += '\'\nprint \''
-        for row in eval(s):
-          toReturn += '|'
-          for col in row:
-            toReturn +=  str('').ljust(2) + str(col).ljust(width - 3) + '|'
-          toReturn += '\'\nprint \''
-        toReturn += '-'
-        for i in range(len(eval(s)[0])):
-          toReturn += str('').ljust(width, '-')
-        toReturn += '\'\n'
-        parent.python += toReturn
-         
-      # Non-standard SQL   
+        parent.python += self.print_select(self.select())
+
+        # Non-standard SQL   
       elif (case == 'TRIPLES'):
          s =  ", ".join(map(str, self.database['triples']))
          parent.python += s
@@ -325,6 +303,7 @@ class SQL:
         selection_list = selection.split(',')
       else:
         selection_list = selection
+      self.last_table = table
       self.last_selection = selection_list
         
       table_results = []
@@ -390,6 +369,32 @@ class SQL:
     keys.sort()
     for key in keys:
       print key, ':', self.database[key]
+      
+  def print_select(self, s):
+    width = 17
+    toReturn = 'print \'' + self.last_table + ':\'\n'
+    toReturn += self.print_horz_rule(s, width)
+    
+    toReturn += 'print \'|'
+    for col in self.last_selection:
+      toReturn +=  str('').ljust(2) + str(col).ljust(width - 3) + '|'
+    toReturn += '\'\n'
+    toReturn += self.print_horz_rule(s, width)
+    
+    for row in eval(s):
+      toReturn += 'print \'|'
+      for col in row:
+        toReturn +=  str('').ljust(2) + str(col).ljust(width - 3) + '|'
+      toReturn += '\'\n'
+    toReturn += self.print_horz_rule(s, width)
+    return toReturn
+        
+  def print_horz_rule(self, s, width):
+    toReturn = 'print \'|'
+    for i in range(len(eval(s)[0])):
+      toReturn += str('').ljust(width, '-')
+    toReturn += '\'\n'
+    return toReturn
   
 ########################################################################
 ########################################################################
