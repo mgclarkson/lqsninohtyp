@@ -14,10 +14,10 @@ print
 :sql
 
 sql:
-  CREATE TABLE Firsts ( 
-    name VARCHAR(5)
+  CReAtE TaBLE Firsts ( 
+    name vaRchar(5)
   )
-  INSERT INTO Firsts VALUES ('Phil')
+  INSERT InTO Firsts VAluES ('Phil')
   INSERT INTO Firsts VALUES ('Matthew')
   INSERT INTO Firsts VALUES ('Joaquin')
 :sql
@@ -42,6 +42,21 @@ list = sql:TRIPLES:sql
 
 for i in sql:TRIPLES:sql:
   print i
+  
+print sql:
+SELECT name
+FROM Customers
+:sql
+
+print sql:
+SELECT name, last
+FROM Customers
+:sql
+
+print sql:
+SELECT *
+FROM Customers
+:sql
 
 for a in range(0, 10):
   print a,

@@ -16,7 +16,10 @@
 ## URGENT:
 ## None Currently
 ## 
-## FIX:
+## TO FIX:
+## None Currently
+##
+## DONE:
 ## Handle line breaks as spaces and don't strip those -J
 ## Inline tags -J
 ## Multiple sql statements in a tag -J
@@ -31,7 +34,7 @@ import subprocess
 import re
 
 DEBUG = False
-DEBUG = True
+# DEBUG = True
 
 ########################################################################
 
@@ -53,12 +56,17 @@ class SQL:
         case = self.sql_insert[0:self.sql_insert.find(' ')]
       else:
         case = self.sql_insert
+      case = case.upper()
       if (case == 'CREATE'):
         self.create()
-      elif (case == 'ALTER'):
-         self.alter()
       elif (case == 'INSERT'):
          self.insert()
+      elif (case == 'ALTER'):
+         self.alter()
+      elif (case == 'SELECT'):
+         s = self.select()
+         # s =  ", ".join(map(str, s))
+         parent.python += s
       elif (case == 'TRIPLES'):
          s =  ", ".join(map(str, self.database['triples']))
          parent.python += s
@@ -115,7 +123,7 @@ class SQL:
           self.database['constraints'][table] = {}
         if not column in self.database['constraints'][table]:
           self.database['constraints'][table][column] = {}
-        self.database['constraints'][table][column][constraint] = int
+        self.database['constraints'][table][column][constraint.upper()] = int
       if DEBUG: self.print_database()
     else:
       raise NameError('SQL: Statement incorrect or not yet supported:\n' + self.sql_insert)
@@ -172,6 +180,44 @@ class SQL:
     else:
       raise NameError('SQL: Statement incorrect or not yet supported:\n' + self.sql_insert)
     
+  def select(self):
+    re1='(SELECT)'	# Word 1
+    ws='(\\s+)'	# White Space 1
+    re2='((?:[a-z][a-z0-9_]*,?\s?[a-z][a-z0-9_]*)|\*)'	# Variable Name 1
+    re3='(FROM)'	# Word 2
+    re4='((?:[a-z][a-z0-9_]*))'	# Variable Name 1
+
+    rg = re.compile(re1+ws+re2+ws+re3+ws+re4,re.IGNORECASE|re.DOTALL)
+    m = rg.search(self.sql_insert)
+    if m:
+      selection = m.group(3)
+      table = m.group(7)
+      self.sql_insert = self.sql_insert[len(m.group(0)):].strip()
+      
+      if selection == '*':
+        selection = self.database[table + '_fields']
+      
+      table_results = []
+      row_results = {}
+      for trple in self.database['triples']:
+        for unique_id in self.database[table]:
+          if unique_id == trple[0]:
+            if isinstance(selection, str):
+              selection_list = selection.split(',')
+            else:
+              selection_list = selection
+            for column in selection_list:
+              if column.strip() == trple[1]:
+                if not unique_id in row_results:
+                  row_results[unique_id] = []
+                row_results[unique_id].append(trple[2])
+      for unique_id in row_results:
+        table_results.append(row_results[unique_id])
+      if DEBUG: print table_results
+      return str(table_results)
+    else:
+      raise NameError('SQL: Statement incorrect or not yet supported:\n' + self.sql_insert)
+
   def print_database(self):
     print 'Database:'
     keys = self.database.keys()

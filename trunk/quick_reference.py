@@ -4,6 +4,9 @@ Quick Reference: I named it a *.py for IDE color coding reasons.
 * Also declaring takes place on the fly.
 * Also there are no needed return types for this reason. All methods are unrequired "voids".
 * Each "tab" is really 2 spaces.
+* Strings can be like 'this' or "this". I tend to stick toward using 'single' quotes in the code just a personal
+    standard but either way since it's interchangeable.
+* string.split(', ') returns a list where the string is parsed where every comma+space are seperators.
 
 Data Structure (Initialization):
   self.database = {} # A database is a dictionary.
