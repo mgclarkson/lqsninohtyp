@@ -48,7 +48,7 @@
 ##    VIEWS?
 ##    NULL in WHERE & INSERT -J'll do
 ##    
-##  DATATYPES in CREATE & INSERT:
+##  DATATYPES in INSERT (CREATE already implemented -J):
 ##    char(n)
 ##    text
 ##    bit
@@ -69,7 +69,8 @@
 ## None Currently
 ## 
 ## TO FIX:
-## None Currently
+## Accept more than 3 vars in create
+## Find reason for slow WHERE processing
 ##
 ## DONE:
 ## Handle line breaks as spaces and don't strip those -J
@@ -86,7 +87,7 @@ import subprocess
 import re
 
 DEBUG = False
-# DEBUG = True
+DEBUG = True
 
 ########################################################################
 
@@ -167,6 +168,7 @@ class SQL:
         column = ''
         constraint = ''
         int = -1
+        print el
         for i in range(len(el)):
           re9='.*?(\\(.*?\\)).*'	# Round Braces 1
           rg = re.compile(re9,re.IGNORECASE|re.DOTALL)
@@ -275,10 +277,26 @@ class SQL:
               if len(data) > int(type_val):
                 print 'SQL: Inserted value trimmed to fit specified database limit: ' + data[0:int(type_val)] + ' from: ' + data
                 data = data[0:int(type_val)]
-            if type == 'INT':
+            elif type == 'INT':
               if not isinstance(int(data), int):
                 raise NameError('SQL: Incorrect data type. Expected an INT: ' + data)
               data = int(data)
+            elif type == 'CHAR':
+              data = data
+            elif type == 'TEXT':
+              data = data
+            elif type == 'BIT':
+              data = data
+            elif type == 'BIGINT':
+              data = data
+            elif type == 'REAL':
+              data = data
+            elif type == 'DATE':
+              data = data
+            elif type == 'TIME':
+              data = data
+            elif type == 'DATETIME':
+              data = data
             self.database['triples'].append((self.database['current_record'], columns[i], data))
             if not self.database['current_record'] in self.database[table]:
               self.database[table].append(self.database['current_record'])
@@ -291,14 +309,15 @@ class SQL:
   def select(self):
     re1='(SELECT)'	# Word 1
     ws='(\\s+)'	# White Space 1
-    re2='((?:[a-z][a-z0-9_]*,?\s?)*|\*)'	# Variable Name 1
+    # re2='((?:[a-z][a-z0-9_]*,?\\s*)*|\*)'	THIS MAKES IT LAG....
+    re2='(.*?)'	# Variable Name 1
     re3='(FROM)'	# Word 2
     re4='((?:[a-z][a-z0-9_]*))'	# Variable Name 1
 
     re12='(SELECT\\s+DISTINCT)'	# Word 1
     
     re13='(WHERE)'	# Word 1
-    re53='(.*?)'	# Variable Name 2
+    re53='(.?.?)'	# Variable Name 2
     re43='((?:[a-z0-9_]*))'	# Variable Name 1
     
     rg = re.compile(re1+ws+re2+ws+re3+ws+re4,re.IGNORECASE|re.DOTALL)
@@ -324,7 +343,7 @@ class SQL:
         comp_column=where.group(3)
         operator=where.group(5)
         value=where.group(7)
-        self.sql_insert = self.sql_insert[len(m.group(0)):].strip()
+        self.sql_insert = self.sql_insert[len(where.group(0)):].strip()
         
       if selection == '*':
         selection = self.database[table + '_fields']
