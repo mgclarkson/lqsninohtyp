@@ -70,13 +70,13 @@
 ## 
 ## TO FIX:
 ## Accept more than 3 vars in create
-## Find reason for slow WHERE processing
 ##
 ## DONE:
 ## Handle line breaks as spaces and don't strip those -J
 ## Inline tags -J
 ## Multiple sql statements in a tag -J
 ## Capitalization of keywords. Standardize. -J
+## Find reason for slow WHERE processing -J
 ## 
 ## 
 ## 
@@ -87,7 +87,7 @@ import subprocess
 import re
 
 DEBUG = False
-DEBUG = True
+# DEBUG = True
 
 ########################################################################
 
@@ -168,7 +168,6 @@ class SQL:
         column = ''
         constraint = ''
         int = -1
-        print el
         for i in range(len(el)):
           re9='.*?(\\(.*?\\)).*'	# Round Braces 1
           rg = re.compile(re9,re.IGNORECASE|re.DOTALL)
