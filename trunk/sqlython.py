@@ -39,6 +39,7 @@
 ##    LIKE in WHERE -J'll do
 ##    IN in WHERE -J'll do
 ##    BETWEEN in WHERE -J'll do
+##    WILDCARDS? in WHERE
 ##    ALIAS?
 ##    SELECT INTO
 ##    CONSTRAINTS(6) in CREATE -J'll do
