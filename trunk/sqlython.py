@@ -124,6 +124,8 @@ class SQL:
         parent.python += s
       elif (case == 'TRUNCATE'):
         self.truncate()
+      elif (case == 'ALTER'):
+        self.alter()
       elif (case == 'PRINT'):
         self.sql_insert = self.sql_insert[len(case):].strip()
         parent.python += self.print_select(self.select())
