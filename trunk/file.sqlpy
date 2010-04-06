@@ -121,3 +121,16 @@ print
 for i in sql:CONTENTS SELECT * FROM Customers:sql:
   print i,
 print
+sql:
+  INSERT INTO Customers VALUES ('JJ', , 7456123)
+:sql
+
+sql:
+  CREATE TABLE new_Customers ( 
+    name VARCHAR(100) ,
+    last VARCHAR(15),
+    phone int,
+    birthday int
+  )
+      INSERT INTO new_Customers VALUES ('Phil', 'Cannata', 7735647, 1)
+:sql

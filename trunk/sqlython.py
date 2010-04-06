@@ -18,6 +18,9 @@
 ##   
 ##   print sql:PRINT SELECT * FROM table:sql -J
 ##   
+##   USING STANDARD PYTHON COMMAND LINE FOR LINE BY LINE EVAL (...SHOULD BLOW HIM AWAY)
+##   USING PIPE USAGE
+##   
 ##  COMMANDS:
 ##    CREATE TABLE -J
 ##    DROP INDEX -J
@@ -70,7 +73,6 @@
 ## None Currently
 ## 
 ## TO FIX:
-## Accept more than 3 vars in create
 ##
 ## DONE:
 ## Handle line breaks as spaces and don't strip those -J
@@ -78,6 +80,7 @@
 ## Multiple sql statements in a tag -J
 ## Capitalization of keywords. Standardize. -J
 ## Find reason for slow WHERE processing -J
+## Accept more than 3 vars in create (no error, following INSERT code was messed up) -J
 ## 
 ## 
 ## 
@@ -88,7 +91,7 @@ import subprocess
 import re
 
 DEBUG = False
-# DEBUG = True
+DEBUG = True
 
 ########################################################################
 
@@ -115,6 +118,8 @@ class SQL:
       case = case.upper()
       if (case == 'CREATE'):
         self.create()
+      elif (case == 'ALTER'):
+        self.alter()
       elif (case == 'DROP'):
         self.drop()
       elif (case == 'INSERT'):
@@ -124,8 +129,6 @@ class SQL:
         parent.python += s
       elif (case == 'TRUNCATE'):
         self.truncate()
-      elif (case == 'ALTER'):
-        self.alter()
       elif (case == 'PRINT'):
         self.sql_insert = self.sql_insert[len(case):].strip()
         parent.python += self.print_select(self.select())
@@ -197,6 +200,41 @@ class SQL:
       raise NameError('SQL: Statement incorrect or not yet supported:\n' + self.sql_insert)
     if DEBUG: self.print_database()
       
+  def alter(self):
+    re1='(ALTER)'	# Word 1
+    ws='(\\s+)'	# White Space
+    re3='(TABLE)'	# Word 2
+    
+    re5='((?:[a-z][a-z0-9_]*))'	# tableName
+    re6='((?:[a-z][a-z0-9_]*))'	# columnName
+    re7='((?:[a-z][a-z0-9_]*))'	# dataType
+    
+    addc='(ADD)'	# Word 3
+    dropc='(DROP\\s+COLUMN)' # Word 3
+    alterc='(ALTER\\s+COLUMN)' # Word 3
+    
+    rg = re.compile(re1+ws+re3+ws+re5+ws+addc+ws+re6+ws+re7,re.IGNORECASE|re.DOTALL)
+    m = rg.search(self.sqlinsert)
+    
+    rg = re.compile(re1+ws+re3+ws+re5+ws+dropc+ws+re6,re.IGNORECASE|re.DOTALL)
+    dc = rg.search(self.sqlinsert)
+    
+    rg = re.compile(re1+ws+re3+ws+re5+ws+alterc+ws+re6+ws+re7,re.IGNORECASE|re.DOTALL)
+    ac = rg.search(self.sqlinsert)
+    
+    if m:
+      table=m.group(11)
+      ##TODO
+    elif dc:
+      table=dc.group(9)
+      ##TODO
+    elif ac:
+      table=ac.group(11)
+      #TODO
+    else:
+      raise NameError('SQL: Statement incorrect or not yet supported:\n' + self.sql_insert)
+  
+
   def drop(self):
     re1='(DROP)'	# Variable Name 1
     ws='(\\s+)'	# White Space 1
@@ -258,12 +296,13 @@ class SQL:
     m = rg.search(self.sql_insert)
     if m:
       table = m.group(5)
-      value = eval(m.group(9))
+      toEval = m.group(9).replace(',,', ', \'\',').replace(', ,', ', \'\',').replace(',  ,', ', \'\',')
+      value = eval(toEval)
       self.sql_insert = self.sql_insert[len(m.group(0)):].strip()
 
       columns = self.database[table + '_fields']
       if not ((isinstance(value, str) and len(columns) == 1) or (len(value) == len(columns))):
-        raise NameError('SQL: Statement incorrect:\n' + self.sql_insert)
+        raise NameError('SQL: Statement incorrect:\n' + m.group(0))
         
       self.database['current_record'] += 1
       for i in range(len(columns)):
