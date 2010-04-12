@@ -141,3 +141,16 @@ sql:
       INSERT INTO new_Customers VALUES ('Philly', 'Cannata', 7735647, 1)
       INSERT INTO new_Customers VALUES ('Phil', 'Cannata', 7735647, 1)
 :sql
+
+sql:
+  ALTER TABLE new_Customers ADD gender VARCHAR(1)
+:sql
+
+sql:
+  ALTER TABLE new_Customers ALTER COLUMN gender VARCHAR
+:sql
+
+sql:
+  ALTER TABLE new_Customers DROP COLUMN birthday
+:sql
+

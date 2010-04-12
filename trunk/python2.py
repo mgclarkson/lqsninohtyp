@@ -87,6 +87,19 @@
 ## Find reason for slow WHERE processing -J
 ## Accept more than 3 vars in create (no error, following INSERT code was messed up) -J
 ## 
+## TO RUN: -J
+##   Windows:
+##    python2.py file.py2
+##    python2.py --console
+##  Linux:
+##    setup.py
+##      then:
+##        file.py2        (No need for python2.py)
+##    python2.py file.py2
+##    python2.py --console
+##    cat file.py2 | python2.py
+##    python2.py < file.py2
+## 
 ## 
 ## 
 
@@ -96,7 +109,7 @@ import subprocess
 import re
 
 DEBUG = False
-# DEBUG = True
+DEBUG = True
 
 ########################################################################
 
@@ -106,6 +119,7 @@ DEBUG = False
 
 class SQL:
   def __init__(self, parent, database, sql_insert):
+  
     # Create class variable references
     self.parent = parent
     self.database = database
@@ -115,6 +129,7 @@ class SQL:
     
     if DEBUG: print self.sql_insert
 
+    # Parse the sql insert until no more characters are left
     while not self.sql_insert == '':
       if self.sql_insert.find(' ') > -1:
         case = self.sql_insert[0:self.sql_insert.find(' ')]
@@ -192,6 +207,12 @@ class SQL:
             else:
               constraint = el[i]
         # Create a column in the database with the name 'column'
+        # ###
+        # ###
+        # ###
+        # Check this with J: why no '_fields'?
+        # ###
+        # ###
         if not column in self.database[fields]:
           self.database[fields].append(column)
         else:
@@ -206,40 +227,104 @@ class SQL:
     if DEBUG: self.print_database()
       
   def alter(self):
-    re1='(ALTER)'	# Word 1
-    ws='(\\s+)'	# White Space
-    re3='(TABLE)'	# Word 2
+    ws='(\\s+)'	# white space
+    altTable='(ALTER\\s+TABLE)'	# alterTable
+    tableNm='((?:[a-z][a-z0-9_]*))'	# tableName
+    colNm='((?:[a-z][a-z0-9_]*))'	# columnName
+    dataTy='((?:[a-z][a-z0-9_]*))'	# dataType
+    dataBrc='((\\(.*\\))?)' #dataTypeBrackets
+    addC='(ADD)' # variation 1: addColumn
+    dropC='(DROP\\s+COLUMN)' # variation 2: dropColumn
+    modC='(ALTER\\s+COLUMN)' # variation 3: modifyColumn   
     
-    re5='((?:[a-z][a-z0-9_]*))'	# tableName
-    re6='((?:[a-z][a-z0-9_]*))'	# columnName
-    re7='((?:[a-z][a-z0-9_]*))'	# dataType
+    rg1 = re.compile(altTable+ws+tableNm+ws+addC+ws+colNm+ws+dataTy+dataBrc,re.IGNORECASE|re.DOTALL)
+    addCol = rg1.search(self.sql_insert) # ADD
+        
+    rg2 = re.compile(altTable+ws+tableNm+ws+dropC+ws+colNm,re.IGNORECASE|re.DOTALL)
+    dropCol = rg2.search(self.sql_insert) # DROP COLUMN
     
-    addc='(ADD)'	# Word 3
-    dropc='(DROP\\s+COLUMN)' # Word 3
-    alterc='(ALTER\\s+COLUMN)' # Word 3
+    rg3 = re.compile(altTable+ws+tableNm+ws+modC+ws+colNm+ws+dataTy+dataBrc,re.IGNORECASE|re.DOTALL)
+    modifyCol = rg3.search(self.sql_insert) # ALTER COLUMN
     
-    rg = re.compile(re1+ws+re3+ws+re5+ws+addc+ws+re6+ws+re7,re.IGNORECASE|re.DOTALL)
-    m = rg.search(self.sqlinsert)
-    
-    rg = re.compile(re1+ws+re3+ws+re5+ws+dropc+ws+re6,re.IGNORECASE|re.DOTALL)
-    dc = rg.search(self.sqlinsert)
-    
-    rg = re.compile(re1+ws+re3+ws+re5+ws+alterc+ws+re6+ws+re7,re.IGNORECASE|re.DOTALL)
-    ac = rg.search(self.sqlinsert)
-    
-    if m:
-      table=m.group(11)
-      ##TODO
-    elif dc:
-      table=dc.group(9)
-      ##TODO
-    elif ac:
-      table=ac.group(11)
-      #TODO
+    #ALTER called with ADD 
+    if addCol:
+      table=addCol.group(3)
+      column=addCol.group(7)
+      dataType=addCol.group(9)
+      int=addCol.group(10)[1:-1]
+      self.sql_insert = self.sql_insert[len(addCol.group(0)):].strip()
+           
+      #table isn't in the database, throw error  
+      if not table in self.database:
+        raise NameError('SQL: Specified table doesn\'t exist:\n' + self.sql_insert)
+      #column has already been created, throw error
+      elif column in self.database[table+'_fields']:
+        raise NameError('SQL: Cannot add column, it already exists:\n' + self.sql_insert)
+      #append new column to database
+      else:
+        self.database[table+'_fields'].append(column)
+        
+      #TODO: optional check if datatype is a valid datatype
+      #
+      
+      self.database['constraints'][table][column] = {}
+      #if the dataType has a size associated with it
+      if int:
+      	self.database['constraints'][table][column][dataType] = int
+      else:
+        self.database['constraints'][table][column][dataType] = -1      
+      
+    #ALTER called with DROP COLUMN
+    elif dropCol:
+      table=dropCol.group(3)
+      column=dropCol.group(7)
+      self.sql_insert = self.sql_insert[len(dropCol.group(0)):].strip()
+
+      #column is in the table, drop it
+      if column in self.database[table + '_fields']:
+        self.database[table + '_fields'].remove(column)
+        for trple in self.database['triples']:
+          for unique_id in self.database[table]:
+            if unique_id == trple[0] and column == trple[1]:
+              self.database['triples'].remove(trple)
+        del self.database['constraints'][table][column]
+      #column doesn't exist, ignore
+      else:
+        print 'Column: ' + column + ' does not exist. Table unchanged.'
+
+    #ALTER called with ALTER COLUMN (modify the datatype of the column)
+    elif modifyCol:
+      table=modifyCol.group(3)
+      column=modifyCol.group(7)
+      dataType=modifyCol.group(9)
+      int=modifyCol.group(10)[1:-1]
+      self.sql_insert = self.sql_insert[len(modifyCol.group(0)):].strip()
+
+      #column is in the table, modify it
+      if column in self.database[table + '_fields']:
+        ###
+        ###
+        #TODO: modify the column's dataType
+        print table, column, dataType, int
+        if int == '':
+          int = -1
+        self.database['constraints'][table][column][dataType.upper()] = int
+        pass
+        ###
+        ###
+      #column doesn't exist, ignore
+      else:
+        print 'Column: ' + column + ' does not exist. Table unchanged.'
+
+      #TODO: optional check in dataType is a valid dataType
+      #
+
+    #incorrect syntax on the ALTER call 
     else:
       raise NameError('SQL: Statement incorrect or not yet supported:\n' + self.sql_insert)
   
-
+    if DEBUG: self.print_database()
+    
   def drop(self):
     re1='(DROP)'	# Variable Name 1
     ws='(\\s+)'	# White Space 1
