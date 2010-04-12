@@ -192,20 +192,20 @@ class SQL:
       for e in list:
         el = e.split()
         column = ''
-        constraint = ''
+        datatype = ''
         int = -1
         for i in range(len(el)):
           re9='.*?(\\(.*?\\)).*'	# Round Braces 1
           rg = re.compile(re9,re.IGNORECASE|re.DOTALL)
           m = rg.search(el[i])
           if m:
-            constraint = el[i][0:el[i].find('(')]
+            datatype = el[i][0:el[i].find('(')]
             int = m.group(1)[1:-1]
           else:
             if column == '':
               column = el[i]
             else:
-              constraint = el[i]
+              datatype = el[i]
         # Create a column in the database with the name 'column'
         # ###
         # ###
@@ -217,11 +217,11 @@ class SQL:
           self.database[fields].append(column)
         else:
           raise NameError('SQL: Column name already exists: ' + column)
-        if not table in self.database['constraints']:
-          self.database['constraints'][table] = {}
-        if not column in self.database['constraints'][table]:
-          self.database['constraints'][table][column] = {}
-        self.database['constraints'][table][column][constraint.upper()] = int
+        if not table in self.database['datatypes']:
+          self.database['datatypes'][table] = {}
+        if not column in self.database['datatypes'][table]:
+          self.database['datatypes'][table][column] = {}
+        self.database['datatypes'][table][column][datatype.upper()] = int
     else:
       raise NameError('SQL: Statement incorrect or not yet supported:\n' + self.sql_insert)
     if DEBUG: self.print_database()
@@ -267,12 +267,12 @@ class SQL:
       #TODO: optional check if datatype is a valid datatype
       #
       
-      self.database['constraints'][table][column] = {}
+      self.database['datatypes'][table][column] = {}
       #if the dataType has a size associated with it
       if int:
-      	self.database['constraints'][table][column][dataType] = int
+      	self.database['datatypes'][table][column][dataType] = int
       else:
-        self.database['constraints'][table][column][dataType] = -1      
+        self.database['datatypes'][table][column][dataType] = -1      
       
     #ALTER called with DROP COLUMN
     elif dropCol:
@@ -287,7 +287,7 @@ class SQL:
           for unique_id in self.database[table]:
             if unique_id == trple[0] and column == trple[1]:
               self.database['triples'].remove(trple)
-        del self.database['constraints'][table][column]
+        del self.database['datatypes'][table][column]
       #column doesn't exist, ignore
       else:
         print 'Column: ' + column + ' does not exist. Table unchanged.'
@@ -308,7 +308,7 @@ class SQL:
         print table, column, dataType, int
         if int == '':
           int = -1
-        self.database['constraints'][table][column][dataType.upper()] = int
+        self.database['datatypes'][table][column][dataType.upper()] = int
         pass
         ###
         ###
@@ -351,7 +351,7 @@ class SQL:
           for unique_id in self.database[table]:
             if unique_id == trple[0] and column == trple[1]:
               self.database['triples'].remove(trple)
-        del self.database['constraints'][table][column]
+        del self.database['datatypes'][table][column]
       else:
         print 'Field: ' + column + ' does not exist. Table unchanged.'
     elif drop_table:
@@ -365,7 +365,7 @@ class SQL:
               self.database['triples'].remove(trple)
         del self.database[table + '_fields']
         del self.database[table]
-        del self.database['constraints'][table]
+        del self.database['datatypes'][table]
       else:
         print 'Table: ' + table + ' does not exist. Database unchanged.'
     else:
@@ -413,9 +413,9 @@ class SQL:
         else:
           data = value[i]
           
-        if table in self.database['constraints'] and columns[i] in self.database['constraints'][table]:
-          type = self.database['constraints'][table][columns[i]].keys()[0]
-          type_val = self.database['constraints'][table][columns[i]][type]
+        if table in self.database['datatypes'] and columns[i] in self.database['datatypes'][table]:
+          type = self.database['datatypes'][table][columns[i]].keys()[0]
+          type_val = self.database['datatypes'][table][columns[i]][type]
           if type == 'VARCHAR':
             if len(data) > int(type_val):
               print 'SQL: Inserted value trimmed to fit specified database limit: ' + data[0:int(type_val)] + ' from: ' + data
@@ -547,7 +547,7 @@ class SQL:
               self.database['triples'].remove(trple)
         self.database[table + '_fields'] = []
         self.database[table] = []
-        del self.database['constraints'][table]
+        del self.database['datatypes'][table]
       else:
         print 'Table: ' + table + ' does not exist. Database unchanged.'
     else:
@@ -605,7 +605,7 @@ class SQLinjection:
     self.sql_insertion_end_tag = self.sql_insertion_tag[-1:] + self.sql_insertion_tag[0:-1]
     self.database = {}
     self.database['triples'] = []
-    self.database['constraints'] = {}
+    self.database['datatypes'] = {}
     self.database['current_record'] = 0
     self.python = ''
     
