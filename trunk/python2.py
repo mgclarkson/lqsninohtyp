@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 ## Sources: http://www.w3schools.com/sql/default.asp
 ## Sources: http://www.mckoi.com/database/SQLSyntax.html
 ## Sources: http://txt2re.com/index-python.php3
@@ -18,8 +20,8 @@
 ##   
 ##   print sql:PRINT SELECT * FROM table:sql -J
 ##   
-##   USING STANDARD PYTHON COMMAND LINE FOR LINE BY LINE EVAL (...SHOULD BLOW HIM AWAY)
-##   USING PIPE USAGE
+##   USING STANDARD PYTHON COMMAND LINE FOR LINE BY LINE EVAL (...SHOULD BLOW HIM AWAY) - J
+##   USING PIPE USAGE - J
 ##   
 ##  COMMANDS:
 ##    CREATE TABLE -J
@@ -73,7 +75,10 @@
 ## None Currently
 ## 
 ## TO FIX:
-##
+## Catch KeyboardInterrupt
+## Redirect CommandGUI
+## Create+ white space
+## 
 ## DONE:
 ## Handle line breaks as spaces and don't strip those -J
 ## Inline tags -J
@@ -91,7 +96,7 @@ import subprocess
 import re
 
 DEBUG = False
-DEBUG = True
+# DEBUG = True
 
 ########################################################################
 
@@ -296,7 +301,10 @@ class SQL:
     m = rg.search(self.sql_insert)
     if m:
       table = m.group(5)
-      toEval = m.group(9).replace(',,', ', \'\',').replace(', ,', ', \'\',').replace(',  ,', ', \'\',')
+      toEval = m.group(9)
+      toEval = toEval.replace('(,', '(\'\', ').replace('( ,', '(\'\', ').replace('(  ,', '(\'\', ')
+      toEval = toEval.replace(',,', ', \'\',').replace(', ,', ', \'\',').replace(',  ,', ', \'\',')
+      toEval = toEval.replace(',)', ', \'\')').replace(', )', ', \'\')').replace(',  )', ', \'\')')
       value = eval(toEval)
       self.sql_insert = self.sql_insert[len(m.group(0)):].strip()
 
@@ -304,45 +312,54 @@ class SQL:
       if not ((isinstance(value, str) and len(columns) == 1) or (len(value) == len(columns))):
         raise NameError('SQL: Statement incorrect:\n' + m.group(0))
         
+      for j in self.database[table]:
+        record = []
+        for record_data in self.database['triples']:
+          if record_data[0] == j:
+            record.append(record_data[2])
+        if tuple(record) == value:
+          print 'SQL: Redundant information attempted insertion. Database not updated.'
+          return
+        
       self.database['current_record'] += 1
       for i in range(len(columns)):
         if (isinstance(value, str)):
           data = value
         else:
           data = value[i]
-        if not (table, columns[i], data) in self.database['triples']:
-          if table in self.database['constraints'] and columns[i] in self.database['constraints'][table]:
-            type = self.database['constraints'][table][columns[i]].keys()[0]
-            type_val = self.database['constraints'][table][columns[i]][type]
-            if type == 'VARCHAR':
-              if len(data) > int(type_val):
-                print 'SQL: Inserted value trimmed to fit specified database limit: ' + data[0:int(type_val)] + ' from: ' + data
-                data = data[0:int(type_val)]
-            elif type == 'INT':
-              if not isinstance(int(data), int):
-                raise NameError('SQL: Incorrect data type. Expected an INT: ' + data)
+          
+        if table in self.database['constraints'] and columns[i] in self.database['constraints'][table]:
+          type = self.database['constraints'][table][columns[i]].keys()[0]
+          type_val = self.database['constraints'][table][columns[i]][type]
+          if type == 'VARCHAR':
+            if len(data) > int(type_val):
+              print 'SQL: Inserted value trimmed to fit specified database limit: ' + data[0:int(type_val)] + ' from: ' + data
+              data = data[0:int(type_val)]
+          elif type == 'INT':
+            if data == '':
+              data = None
+            elif not isinstance(int(data), int):
+              raise NameError('SQL: Incorrect data type. Expected an INT: ' + data)
               data = int(data)
-            elif type == 'CHAR':
-              data = data
-            elif type == 'TEXT':
-              data = data
-            elif type == 'BIT':
-              data = data
-            elif type == 'BIGINT':
-              data = data
-            elif type == 'REAL':
-              data = data
-            elif type == 'DATE':
-              data = data
-            elif type == 'TIME':
-              data = data
-            elif type == 'DATETIME':
-              data = data
-            self.database['triples'].append((self.database['current_record'], columns[i], data))
-            if not self.database['current_record'] in self.database[table]:
-              self.database[table].append(self.database['current_record'])
-        else:
-          print 'SQL: Redundant information attempted insertion. Database not updated.'
+          elif type == 'CHAR':
+            data = data
+          elif type == 'TEXT':
+            data = data
+          elif type == 'BIT':
+            data = data
+          elif type == 'BIGINT':
+            data = data
+          elif type == 'REAL':
+            data = data
+          elif type == 'DATE':
+            data = data
+          elif type == 'TIME':
+            data = data
+          elif type == 'DATETIME':
+            data = data
+          self.database['triples'].append((self.database['current_record'], columns[i], data))
+          if not self.database['current_record'] in self.database[table]:
+            self.database[table].append(self.database['current_record'])
     else:
       raise NameError('SQL: Statement incorrect or not yet supported:\n' + self.sql_insert)
     if DEBUG: self.print_database()
@@ -497,22 +514,22 @@ class SQL:
 '''
 
 class SQLinjection:
-  def __init__(self, filename):
+  def __init__(self):
     # Read from 'sql:' to ':sql'
     self.sql_insertion_tag = 'sql:'
     self.sql_insertion_end_tag = self.sql_insertion_tag[-1:] + self.sql_insertion_tag[0:-1]
-    self.filename = filename
     self.database = {}
     self.database['triples'] = []
     self.database['constraints'] = {}
     self.database['current_record'] = 0
     self.python = ''
     
-  def run(self):
-    file = open(self.filename,'r')
-    line = file.readline()
-    
-    while line: # Read each line and identify sql insertions
+  def run(self, code):
+    self.python = ''
+    code = code.splitlines(True)
+    i = 0
+    while i < len(code): # Read each line and identify sql insertions
+      line = code[i]
       index = line.find(self.sql_insertion_tag)
       if index > -1: # Handle insertion
         self.python += line[0:index]
@@ -520,11 +537,13 @@ class SQLinjection:
         commented_sql_insert = line[line.find(self.sql_insertion_tag) - 1: line.find(self.sql_insertion_tag)] == '#'
         index = line.find(self.sql_insertion_end_tag)
         if index == -1:
-          line = file.readline()
+          i += 1
+          line = code[i]
           index = line.find(self.sql_insertion_end_tag)
           while not index > -1: # Read insertion until EndTag
             sql_insert += line.strip() + ' '
-            line = file.readline()
+            i += 1
+            line = code[i]
             index = line.find(self.sql_insertion_end_tag)
         # Modigy database by SQL statement
         if not commented_sql_insert:
@@ -532,9 +551,46 @@ class SQLinjection:
         self.python += line[index + len(self.sql_insertion_end_tag):]
       else: # Passively handle python text
         self.python += line
-      line = file.readline()
+      i += 1
     return self.python
         
+########################################################################
+
+class CommandGUI:
+  def __init__(self):
+    print 'Python 2: The SQL (r100:39, Apr 26 2010, 14:00:00)'
+    print 'Type "help()", "copyright()", "credits()", or "license()" for more information.'
+    app = SQLinjection()
+    while True:
+      # python_code = '\
+# def copyright():\n\
+  # copyright()\n\
+  # print \'\\nCopyright (c) 2010 Matthew Clarkson and Joaquin Casares.\'\n\
+  # print \'All Rights Reserved.\'\n\
+# def credits():\n\
+  # credits()\n\
+  # print \'\\n    SQL implementation by Matthew Clarkson and Joaquin Casares.\'\n'
+      try:
+        temp = raw_input('>>> ')
+        if temp.strip()[-1:] == ':':
+          looppython_code = 'spacer'
+          temp += '\n'
+          while not looppython_code.strip() == '':
+            looppython_code = raw_input('... ')
+            temp += looppython_code + '\n'
+        try:
+          python_code = app.run(temp)
+          exec python_code
+        except Exception as e:
+          print type(e).__name__ + ':',
+          print e
+      except KeyboardInterrupt:
+        print '\nGoodbye.\n'
+        return
+      except EOFError:
+        print 'Goodbye.\n'
+        return
+
 ########################################################################
 
 '''
@@ -547,31 +603,45 @@ class SQLinjection:
 
 class MainApp:
   def __init__(self):
-    # Run custom script for identifiying SQLinjections
+    
+    if not sys.stdin.isatty():
+      code = ''
+      for s in sys.stdin.readlines():
+        code += s
+      app = SQLinjection()
+      python_code = app.run(code)    
+      exec python_code
+      sys.exit()
+    
     arg = []
     try:
       arg.append(sys.argv[1])
     except:
-      print 'Usage: sqlpython.py input [output]'
+      print 'Usage: \tsqlpython.py inputFile [converted_output_file]'
+      print '\tsqlpython.py --console'
+      print '\t"code" | sqlpython.py'
+      print '\tsqlpython.py < "code"'
       return
-      
-    app = SQLinjection(arg[0])
-      
-    # Format the output file to have print a blank line in the terminal first
-    python_code = app.run()
     
-    try:
-      arg.append(sys.argv[2])
-      
-      # Write parsed and converted code to python file
-      output = open(arg[1], 'w')
-      output.write(python_code)
-      output.close()
-    except:
-      tmp = 0
+    if arg[0] == '-console' or arg[0] == '--console':
+      CommandGUI()
+    else:
+      file = open(arg[0],'r')
+      code = file.read()
+      app = SQLinjection()
+      python_code = app.run(code)    
+      file.close()
+      try:
+        arg.append(sys.argv[2])
+        # Write parsed and converted code to python file
+        output = open(arg[1], 'w')
+        output.write(python_code)
+        output.close()
+      except:
+        tmp = 0
 
-    # Run new code
-    exec python_code
+      # Run new code
+      exec python_code
     
 ########################################################################
 
