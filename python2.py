@@ -32,12 +32,12 @@
 ##    SELECT DISTINCT -J
 ##    SELECT WHERE -J
 ##    TRUNCATE TABLE -J
-##    ALTER TABLE
-##    UPDATE 
-##    DELETE
-##    JOINS(4)
-##    UNION 
-##    INSERT INTO
+##    ALTER TABLE -M
+##    UPDATE -M'll do
+##    DELETE -M'll do
+##    JOINS(4) -M'll do
+##    UNION -M'll do
+##    INSERT INTO -M'll do
 ##    WHERE (AND | OR) in WHERE -J'll do
 ##    ORDER BY in SELECT -J'll do
 ##    TOP in SELECT -J'll do
