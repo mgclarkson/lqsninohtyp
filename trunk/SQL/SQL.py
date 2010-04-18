@@ -8,6 +8,10 @@ from drop import drop
 from insert import insert
 from select import select
 from truncate import truncate
+from delete import delete
+from joins import joins
+from union import union
+from update import update
 
 DEBUG = False
 # DEBUG = True
@@ -44,6 +48,14 @@ class SQL:
         parent.python += s
       elif (case == 'TRUNCATE'):
         truncate(self)
+      elif (case == 'DELETE'):
+        delete(self)
+      elif (case == 'JOINS'):
+        joins(self)
+      elif (case == 'UPDATE'):
+        update(self)
+      elif (case == 'UNION'):
+        union(self)
       elif (case == 'PRINT'):
         self.sql_insert = self.sql_insert[len(case):].strip()
         parent.python += self.print_select(select(self))

@@ -32,7 +32,7 @@ class SQLinjection:
             i += 1
             line = code[i]
             index = line.find(self.sql_insertion_end_tag)
-        # Modigy database by SQL statement
+        # Modify database by SQL statement
         if not commented_sql_insert:
           SQL(self, self.database, sql_insert.strip())
         self.python += line[index + len(self.sql_insertion_end_tag):]

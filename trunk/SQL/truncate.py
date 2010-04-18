@@ -17,9 +17,11 @@ def truncate(self):
     
     if table in self.database:
       for unique_id in self.database[table]:
-        for trple in self.database['triples']:
-          if unique_id == trple[0]:
-            self.database['triples'].remove(trple)
+        i = len(self.database['triples']) - 1
+        while not i == 0:
+          if unique_id == self.database['triples'][i][0]:
+            self.database['triples'].remove(self.database['triples'][i])
+          i -= 1
       self.database[table + '_fields'] = []
       self.database[table] = []
       del self.database['datatypes'][table]

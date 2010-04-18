@@ -137,9 +137,10 @@ sql:
     phone int,
     birthday int
   )
-      INSERT INTO new_Customers VALUES ('Phil', 'Cannata', 7735647, 1)
-      INSERT INTO new_Customers VALUES ('Philly', 'Cannata', 7735647, 1)
-      INSERT INTO new_Customers VALUES ('Phil', 'Cannata', 7735647, 1)
+      INSERT INTO new_Customers VALUES ('Lake', 'Travis', 911, 1)
+      INSERT INTO new_Customers VALUES ('Absente', 'Mee', 302740, 8)
+      INSERT INTO new_Customers VALUES ('Burbple', 'Durple', 8837232, 7)
+      INSERT INTO new_Customers VALUES ('Hes', 'Uxdix', 8675309, 2)
 :sql
 
 sql:
@@ -147,10 +148,13 @@ sql:
 :sql
 
 sql:
-  ALTER TABLE new_Customers ALTER COLUMN gender VARCHAR
+  ALTER TABLE new_Customers ALTER COLUMN gender INT
 :sql
 
 sql:
   ALTER TABLE new_Customers DROP COLUMN birthday
 :sql
 
+sql:
+  DELETE * FROM new_Customers
+:sql
