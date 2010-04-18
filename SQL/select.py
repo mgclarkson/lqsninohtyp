@@ -5,7 +5,8 @@ DEBUG = False
 
 def select(self):
   re1='(SELECT)'	# Word 1
-  ws='(\\s+)'	# White Space 1
+  rws='(\\s+)'	# White Space 1
+  ws='(\\s*)'	# White Space 1
   # re2='((?:[a-z][a-z0-9_]*,?\\s*)*|\*)'	THIS MAKES IT LAG....
   re2='(.*?)'	# Variable Name 1
   re3='(FROM)'	# Word 2

@@ -75,11 +75,11 @@
 ## None Currently
 ## 
 ## TO FIX:
-## Catch KeyboardInterrupt
-## Redirect CommandGUI
 ## Create+ white space
 ## 
 ## DONE:
+## Redirect CommandGUI -J
+## Catch KeyboardInterrupt -J
 ## Handle line breaks as spaces and don't strip those -J
 ## Inline tags -J
 ## Multiple sql statements in a tag -J

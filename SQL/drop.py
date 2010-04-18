@@ -5,17 +5,18 @@ DEBUG = False
 
 def drop(self):
   re1='(DROP)'	# Variable Name 1
-  ws='(\\s+)'	# White Space 1
+  rws='(\\s+)'	# White Space 1
+  ws='(\\s*)'	# White Space 1
   re3='(INDEX)'	# Variable Name 2
   re5='((?:[a-z][a-z0-9_]*))'	# Variable Name 3
   re7='(ON)'	# Word 1
   re9='((?:[a-z][a-z0-9_]*))'	# Variable Name 4
   re32='(TABLE)'	# Word 2
   
-  rg1 = re.compile(re1+ws+re3+ws+re5+ws+re7+ws+re9,re.IGNORECASE|re.DOTALL)
+  rg1 = re.compile(re1+rws+re3+ws+re5+rws+re7+ws+re9,re.IGNORECASE|re.DOTALL)
   drop_field = rg1.search(self.sql_insert)
 
-  rg2 = re.compile(re1+ws+re32+ws+re5,re.IGNORECASE|re.DOTALL)
+  rg2 = re.compile(re1+rws+re32+ws+re5,re.IGNORECASE|re.DOTALL)
   drop_table = rg2.search(self.sql_insert)
   
   if drop_field:

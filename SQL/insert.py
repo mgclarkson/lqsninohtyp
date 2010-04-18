@@ -5,7 +5,8 @@ DEBUG = True
 
 def insert(self):
   re1='(INSERT)'	# Word 1
-  ws='(\\s+)'	# White Space 1
+  rws='(\\s+)'	# White Space 1
+  ws='(\\s*)'	# White Space 1
   re3='(INTO)'	# Word 2
   re5='((?:[a-z][a-z0-9_]*))'	# Variable Name 1
   re7='(VALUES)'	# Word 3
@@ -13,7 +14,7 @@ def insert(self):
   braceCSVbrace='((\()(.*?),(.*)(\)))'
   end = '(' + re9 + '|' + braceCSVbrace + ')'
 
-  rg = re.compile(re1+ws+re3+ws+re5+ws+re7+ws+end,re.IGNORECASE|re.DOTALL)
+  rg = re.compile(re1+rws+re3+ws+re5+rws+re7+ws+end,re.IGNORECASE|re.DOTALL)
   m = rg.search(self.sql_insert)
   if m:
     table = m.group(5)

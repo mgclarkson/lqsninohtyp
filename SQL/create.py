@@ -5,14 +5,15 @@ DEBUG = False
 
 def create(self):
   re1='(CREATE)'	# Word 1
-  ws='(\\s+)'	# White Space 1
+  rws='(\\s+)'	# White Space 1
+  ws='(\\s*)'	# White Space 1
   re3='(TABLE)'	# Word 2
   re5='((?:[a-z][a-z0-9_]*))'	# Variable Name 1
   re7='(\\(.*?\\(.*?\\)\\s+\\))'	# Round Braces 1
   re8='(\\(.*?\\s+\\))'	# Round Braces 1
   end = '(' + re7 + '|' + re8 + ')'
 
-  rg = re.compile(re1+ws+re3+ws+re5+ws+end,re.IGNORECASE|re.DOTALL)
+  rg = re.compile(re1+rws+re3+rws+re5+ws+end,re.IGNORECASE|re.DOTALL)
   m = rg.search(self.sql_insert)
   if m:
     table = m.group(5)
