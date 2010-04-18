@@ -156,5 +156,9 @@ sql:
 :sql
 
 sql:
-  DELETE * FROM new_Customers
+  DELETE FROM new_Customers
 :sql
+
+#sql:
+  #DELETE FROM new_Customers
+#:sql

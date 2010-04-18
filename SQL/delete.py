@@ -41,11 +41,12 @@ def delete(self):
 
   #delete all rows
   if delAllRows1 or delAllRows2:    
-    table=delAllRows1.group(3)
-    print 'XXXXXXXXXXXXXXXXXXX'
-    print 'delete all rows in ' + table
-    print 'XXXXXXXXXXXXXXXXXXX'
-    self.sql_insert = self.sql_insert[len(delAllRows1.group(0)):].strip()
+    if delAllRows1:
+      table=delAllRows1.group(3)
+      self.sql_insert = self.sql_insert[len(delAllRows1.group(0)):].strip()
+    else:
+      table=delAllRows2.group(3)
+      self.sql_insert = self.sql_insert[len(delAllRows2.group(0)):].strip()
     
     if table in self.database:
       for unique_id in self.database[table]:
