@@ -1,7 +1,7 @@
 import re
 
 DEBUG = False
-# DEBUG = True
+DEBUG = True
 
 def insert(self):
   re1='(INSERT)'	# Word 1
