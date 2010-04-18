@@ -14,7 +14,7 @@ from union import union
 from update import update
 
 DEBUG = False
-# DEBUG = True
+DEBUG = True
 
 class SQL:
   def __init__(self, parent, database, sql_insert):

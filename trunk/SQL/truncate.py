@@ -1,15 +1,18 @@
 import re
 
 DEBUG = False
-# DEBUG = True
+DEBUG = True
 
 def truncate(self):
+  if DEBUG: self.print_database()
+  
   re1='(TRUNCATE)'	# Word 1
-  ws='(\\s+)'	# White Space 1
+  rws='(\\s+)'	# White Space 1
+  ws='(\\s*)'	# White Space 1
   re3='(TABLE)'	# Word 2
   re5='((?:[a-z][a-z0-9_]*))'	# Variable Name 1
 
-  rg = re.compile(re1+ws+re3+ws+re5,re.IGNORECASE|re.DOTALL)
+  rg = re.compile(re1+rws+re3+ws+re5,re.IGNORECASE|re.DOTALL)
   m = rg.search(self.sql_insert)
   if m:
     table=m.group(5)
