@@ -18,6 +18,11 @@ def select(self):
   re53='(.?.?)'	# Variable Name 2
   re43='((?:[a-z0-9_]*))'	# Variable Name 1
   
+  re14='(ORDER)'	# Word 1
+  re24='(BY)'	# Word 1
+  re34='((?:[a-z0-9_]*))'
+  re44='((ASC|DESC)?)'
+  
   # Setup the different regex's
   rg = re.compile(re1+ws+re2+ws+re3+ws+re4,re.IGNORECASE|re.DOTALL)
   m = rg.search(self.sql_insert)
@@ -27,6 +32,9 @@ def select(self):
   
   rg = re.compile(re13+ws+re4+ws+re53+ws+re43,re.IGNORECASE|re.DOTALL)
   where = rg.search(self.sql_insert)
+  
+  rg = re.compile(re14+rws+re24+ws+re34+ws+re44,re.IGNORECASE|re.DOTALL)
+  order = rg.search(self.sql_insert)
   
   # If caught by regex
   if m or distinct:
@@ -47,6 +55,11 @@ def select(self):
       value=where.group(7)
       self.sql_insert = self.sql_insert[len(where.group(0)):].strip()
       
+    if order:
+      orderField = order.group(5)
+      orderOrder = order.group(7).upper()
+      self.sql_insert = self.sql_insert[len(order.group(0)):].strip()
+      
     if selection == '*':
       selection = self.database[table + '_fields']
       selection_list = selection
@@ -59,6 +72,7 @@ def select(self):
       
     table_results = []
     row_results = {}
+    orderNum = -1
     # Look at all the triples
     for trple in self.database['triples']:
       # Look at all the recordNums in the table to select from
@@ -72,6 +86,10 @@ def select(self):
               # Initalize return structure for this recordNum
               if not recordNum in row_results:
                 row_results[recordNum] = []
+                
+              if order and trple[1] == orderField:
+                orderNum = len(row_results[recordNum])
+                
               # Add all elements if no where clause
               if not where:
                 row_results[recordNum].append(trple[2])
@@ -94,6 +112,14 @@ def select(self):
     for recordNum in row_results:
       if not row_results[recordNum] == None:
         table_results.append(row_results[recordNum])
+        
+    # Order the select if order clause was used
+    if order:
+      table_results = sorted(table_results, key=lambda sortBy: sortBy[orderNum])
+      # Reverse the order if 'DESC'
+      if orderOrder == 'DESC':
+        table_results.reverse()
+        
     # If distinct clause, remove duplicates from the return table
     if distinct:
       noDupes = [] 
