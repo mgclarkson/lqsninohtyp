@@ -28,7 +28,7 @@ def alter(self):
   if addCol:
     table=addCol.group(3)
     column=addCol.group(7)
-    dataType=addCol.group(9)
+    dataType=addCol.group(9).upper()
     int=addCol.group(10)[1:-1]
     self.sql_insert = self.sql_insert[len(addCol.group(0)):].strip()
          
@@ -42,8 +42,9 @@ def alter(self):
     else:
       self.database[table+'_fields'].append(column)
       
-    #TODO: optional check if datatype is a valid datatype
-    #
+    # Checks to see if dataType is a valid datatype
+    if not dataType in self.database['valid_datatypes']:
+      raise NameError('SQL: Datatype not yet supported:\n' + self.sql_insert)
     
     self.database['datatypes'][table][column] = {}
     #if the dataType has a size associated with it
@@ -74,30 +75,25 @@ def alter(self):
   elif modifyCol:
     table=modifyCol.group(3)
     column=modifyCol.group(7)
-    dataType=modifyCol.group(9)
+    dataType=modifyCol.group(9).upper()
     int=modifyCol.group(10)[1:-1]
     self.sql_insert = self.sql_insert[len(modifyCol.group(0)):].strip()
 
     #column is in the table, modify it
     if column in self.database[table + '_fields']:
-      ###
-      ###
-      #TODO: modify the column's dataType
-      if DEBUG: print table, column, dataType, int
+    
+      # Checks to see if dataType is a valid datatype
+      if not dataType in self.database['valid_datatypes']:
+        raise NameError('SQL: Datatype not yet supported:\n' + self.sql_insert)
+        
       if int == '':
         int = -1
-      self.database['datatypes'][table][column][dataType.upper()] = int
-      pass
-      ###
-      ###
+      self.database['datatypes'][table][column][dataType] = int
+
     #column doesn't exist, ignore
     else:
       print 'Column: ' + column + ' does not exist. Table unchanged.'
 
-    #TODO: optional check in dataType is a valid dataType
-    #
-
-  #incorrect syntax on the ALTER call 
   else:
     raise NameError('SQL: Statement incorrect or not yet supported:\n' + self.sql_insert)
 

@@ -64,6 +64,10 @@ def insert(self):
         type = self.database['datatypes'][table][fieldnames[i]].keys()[0]
         type_val = self.database['datatypes'][table][fieldnames[i]][type]
         
+        # Checks to see if dataType is a valid datatype
+        if not type in self.database['valid_datatypes']:
+          raise NameError('SQL: Datatype not yet supported:\n' + self.sql_insert)
+          
         if type == 'VARCHAR':
           if len(data) > int(type_val):
             print 'SQL: Inserted value trimmed to fit specified database limit: ' + data[:int(type_val)] + ' from: ' + data

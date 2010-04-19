@@ -71,6 +71,8 @@ def create(self):
         self.database['datatypes'][table][fieldname] = {}
       
       # Set the datatypes value
+      if not datatype.upper() in self.database['valid_datatypes']:
+        raise NameError('SQL: Datatype not yet supported:\n' + self.sql_insert)
       self.database['datatypes'][table][fieldname][datatype.upper()] = datatypevalue
   else:
     raise NameError('SQL: Statement incorrect or not yet supported:\n' + self.sql_insert)
