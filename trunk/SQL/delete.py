@@ -57,6 +57,8 @@ def delete(self):
       print 'Column: ' + column + ' does not exist in table: ' + table + '.  Database unchanged.'
     else:
       value = value.replace('\'', '') #strip the opening and closing quotes for the value if string     
+      print 'value:'
+      print value
       foundIds = []
       for unique_id in self.database[table]:
         i = len(self.database['triples']) - 1
@@ -73,11 +75,9 @@ def delete(self):
             print 'removing:'
             print self.database['triples'][j]
             self.database['triples'].remove(self.database['triples'][j])           
-          j -= 1
-        
-        
+          j -= 1       
           
-      #delete index number
+      #TODO: delete index number
         
           
           
