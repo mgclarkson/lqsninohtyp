@@ -1,7 +1,7 @@
 import re
 
 DEBUG = False
-#DEBUG = True
+DEBUG = True
 
 def delete(self):
   ws='(\\s+)'	# white space
@@ -56,9 +56,9 @@ def delete(self):
     elif not column in self.database[table + '_fields']:
       print 'Column: ' + column + ' does not exist in table: ' + table + '.  Database unchanged.'
     else:
-      value = value.replace('\'', '') #strip the opening and closing quotes for the value if string     
-      print 'value:'
-      print value
+      value = eval(value)
+      if not isinstance(value, int):
+        value = value.replace('\'', '') #strip the opening and closing quotes for the value if string     
       foundIds = []
       for unique_id in self.database[table]:
         i = len(self.database['triples']) - 1
@@ -75,7 +75,11 @@ def delete(self):
             print 'removing:'
             print self.database['triples'][j]
             self.database['triples'].remove(self.database['triples'][j])           
-          j -= 1       
+          j -= 1
+        for element in self.database[table]:
+          print element
+          if element == index:
+            self.database[table].remove(element)
           
       #TODO: delete index number
         
