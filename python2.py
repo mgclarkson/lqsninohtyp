@@ -71,6 +71,8 @@
 ## None Currently
 ## 
 ## TO FIX:
+## Stop erroring out due to blankness in print select
+## Get all demos to be good... like update.
 ## 
 ## DONE:
 ## Create+ white space -J
