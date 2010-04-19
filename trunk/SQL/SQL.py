@@ -45,7 +45,13 @@ class SQL:
         insert(self)
       elif (case == 'SELECT'):
         s = select(self)
-        case = self.sql_insert[0:self.sql_insert.find(' ')]
+        union_case = self.sql_insert[0:self.sql_insert.find(' ')].upper()
+        if union_case == 'UNION':
+          self.sql_insert = self.sql_insert[len(case):].strip()
+          s1 = eval(s)
+          s = select(self)
+          s2 = eval(s)
+          print s1, '\n', s2, 1111111111111111
         parent.python += s
       elif (case == 'TRUNCATE'):
         truncate(self)
