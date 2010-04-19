@@ -47,12 +47,12 @@
 ##    WILDCARDS? in WHERE
 ##    ALIAS?
 ##    SELECT INTO
-##    CONSTRAINTS(6) in CREATE -J'll do
+##    CONSTRAINTS(6) in CREATE -??
 ##    CREATE INDEX
 ##    DROP INDEX
-##    INCREMENT in CREATE & INSERT -J'll do
+##    INCREMENT in CREATE & INSERT
 ##    VIEWS?
-##    NULL in WHERE & INSERT -J'll do
+##    NULL in WHERE & INSERT
 ##    
 ##  DATATYPES in INSERT (CREATE already implemented -J):
 ##    char(n)
@@ -75,9 +75,9 @@
 ## None Currently
 ## 
 ## TO FIX:
-## Create+ white space
 ## 
 ## DONE:
+## Create+ white space -J
 ## Redirect CommandGUI -J
 ## Catch KeyboardInterrupt -J
 ## Handle line breaks as spaces and don't strip those -J
@@ -115,6 +115,7 @@ DEBUG = True
 class Python2:
   def __init__(self):
     
+    # Handle a piped in file and run python2 and exit
     if not sys.stdin.isatty():
       code = ''
       for s in sys.stdin.readlines():
@@ -124,6 +125,7 @@ class Python2:
       exec python_code
       sys.exit()
     
+    # Check command line arguments
     arg = sys.argv[1:]
     if len(arg) == 0 or len(arg) > 2:
       print 'Usage: \tsqlpython.py inputFile [converted_output_file]'
@@ -136,9 +138,10 @@ class Python2:
       print 'Run setup.py in Linux to allow for automatic file execution. \n(For code in the same directory as python2.py.)'
       return
     
+    # If argument is console, run the python2 console
     if arg[0] == '-console' or arg[0] == '--console':
       CommandGUI()
-    else:
+    else: # Get the filename and read the python2 code
       file = open(arg[0],'r')
       code = file.read()
       app = SQLinjection()
