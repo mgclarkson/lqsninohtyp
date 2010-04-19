@@ -8,6 +8,7 @@ class SQLinjection:
     self.database = {}
     self.database['triples'] = []
     self.database['datatypes'] = {}
+    self.database['valid_datatypes'] = ['VARCHAR', 'INT', 'CHAR', 'TEXT', 'BIT', 'BIGINT', 'REAL']
     self.database['current_record'] = 0
     self.python = ''
     
