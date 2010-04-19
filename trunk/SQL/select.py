@@ -18,6 +18,7 @@ def select(self):
   re53='(.?.?)'	# Variable Name 2
   re43='((?:[a-z0-9_]*))'	# Variable Name 1
   
+  # Setup the different regex's
   rg = re.compile(re1+ws+re2+ws+re3+ws+re4,re.IGNORECASE|re.DOTALL)
   m = rg.search(self.sql_insert)
   
@@ -27,7 +28,9 @@ def select(self):
   rg = re.compile(re13+ws+re4+ws+re53+ws+re43,re.IGNORECASE|re.DOTALL)
   where = rg.search(self.sql_insert)
   
+  # If caught by regex
   if m or distinct:
+    # Trim sql_insert to size
     if distinct:
       selection = distinct.group(3)
       table = distinct.group(7)
@@ -37,8 +40,9 @@ def select(self):
       table = m.group(7)
       self.sql_insert = self.sql_insert[len(m.group(0)):].strip()
       
+    # Trim sql_insert to size
     if where:
-      comp_column=where.group(3)
+      comparison_column=where.group(3)
       operator=where.group(5)
       value=where.group(7)
       self.sql_insert = self.sql_insert[len(where.group(0)):].strip()
@@ -64,7 +68,7 @@ def select(self):
               if not where:
                 row_results[unique_id].append(trple[2])
               else:
-                if trple[1] == comp_column:
+                if trple[1] == comparison_column:
                   if eval(str(trple[2]) + ' ' + operator + ' ' +  str(value)):
                     row_results[unique_id].append(trple[2])
                   else:
