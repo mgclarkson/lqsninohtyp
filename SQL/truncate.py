@@ -1,7 +1,7 @@
 import re
 
 DEBUG = False
-DEBUG = True
+# DEBUG = True
 
 def truncate(self):
   if DEBUG: self.print_database()

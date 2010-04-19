@@ -49,10 +49,11 @@ def select(self):
       
     if selection == '*':
       selection = self.database[table + '_fields']
-    if isinstance(selection, str):
-      selection_list = selection.split(',')
-    else:
       selection_list = selection
+    else:
+      selection_list = selection.split(',')
+    
+    # For SQL.py
     self.last_table = table
     self.last_selection = selection_list
       
