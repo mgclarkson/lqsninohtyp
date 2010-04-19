@@ -108,7 +108,7 @@ from CommandGUI import *
 from SQLinjection import *
 
 DEBUG = False
-DEBUG = True
+# DEBUG = True
 
 ########################################################################
 
