@@ -13,35 +13,44 @@ def drop(self):
   re9='((?:[a-z][a-z0-9_]*))'	# Variable Name 4
   re32='(TABLE)'	# Word 2
   
+  # Set up regex's
   rg1 = re.compile(re1+rws+re3+ws+re5+rws+re7+ws+re9,re.IGNORECASE|re.DOTALL)
   drop_field = rg1.search(self.sql_insert)
 
   rg2 = re.compile(re1+rws+re32+ws+re5,re.IGNORECASE|re.DOTALL)
   drop_table = rg2.search(self.sql_insert)
   
+  # If dropping field:
   if drop_field:
-    column=drop_field.group(5)
+    fieldname=drop_field.group(5)
     table=drop_field.group(9)
     self.sql_insert = self.sql_insert[len(drop_field.group(0)):].strip()
     
-    if column in self.database[table + '_fields']:
-      self.database[table + '_fields'].remove(column)
+    if fieldname in self.database[table + '_fields']:
+      self.database[table + '_fields'].remove(fieldname)
+      
+      # Loop through all the triples and remove the triples where the recordNum and fieldname match
       for trple in self.database['triples']:
-        for unique_id in self.database[table]:
-          if unique_id == trple[0] and column == trple[1]:
+        for recordNum in self.database[table]:
+          if recordNum == trple[0] and fieldname == trple[1]:
             self.database['triples'].remove(trple)
-      del self.database['datatypes'][table][column]
+      # Delete the fieldname from being referenced
+      del self.database['datatypes'][table][fieldname]
     else:
-      print 'Field: ' + column + ' does not exist. Table unchanged.'
+      print 'Field: ' + fieldname + ' does not exist. Table unchanged.'
+
+  # If dropping table:
   elif drop_table:
     table=drop_table.group(5)
     self.sql_insert = self.sql_insert[len(drop_table.group(0)):].strip()
     
     if table in self.database:
-      for unique_id in self.database[table]:
+      # Loop through all the triples and remove the triples where the recordNum match
+      for recordNum in self.database[table]:
         for trple in self.database['triples']:
-          if unique_id == trple[0]:
+          if recordNum == trple[0]:
             self.database['triples'].remove(trple)
+      # Remove all traces of the table
       del self.database[table + '_fields']
       del self.database[table]
       del self.database['datatypes'][table]

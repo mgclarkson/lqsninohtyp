@@ -42,7 +42,7 @@ def select(self):
       
     # Trim sql_insert to size
     if where:
-      comparison_column=where.group(3)
+      comparison_fieldname=where.group(3)
       operator=where.group(5)
       value=where.group(7)
       self.sql_insert = self.sql_insert[len(where.group(0)):].strip()
@@ -59,26 +59,42 @@ def select(self):
       
     table_results = []
     row_results = {}
+    # Look at all the triples
     for trple in self.database['triples']:
-      for unique_id in self.database[table]:
-        if unique_id == trple[0]:
-          for column in selection_list:
-            if column.strip() == trple[1]:
-              if not unique_id in row_results:
-                row_results[unique_id] = []
+      # Look at all the recordNums in the table to select from
+      for recordNum in self.database[table]:
+        # If the triple is of that table:... else: loop at next triple
+        if recordNum == trple[0]:
+          for fieldname in selection_list:
+            if fieldname.strip() == trple[1]:
+              # This fieldname is in the selection_list, so:
+              
+              # Initalize return structure for this recordNum
+              if not recordNum in row_results:
+                row_results[recordNum] = []
+              # Add all elements if no where clause
               if not where:
-                row_results[unique_id].append(trple[2])
+                row_results[recordNum].append(trple[2])
+              # Add only the elements where where clause matches if where clause exists
               else:
-                if trple[1] == comparison_column:
+                # If we're looking at the triple that decides the comparison:
+                if trple[1] == comparison_fieldname:
+                  # Use python to evaluate the comparision
                   if eval(str(trple[2]) + ' ' + operator + ' ' +  str(value)):
-                    row_results[unique_id].append(trple[2])
+                    # The comparison is allowed, so continue to add data
+                    row_results[recordNum].append(trple[2])
                   else:
-                    row_results[unique_id] = None
-                elif not row_results[unique_id] == None:
-                  row_results[unique_id].append(trple[2])
-    for unique_id in row_results:
-      if not row_results[unique_id] == None:
-        table_results.append(row_results[unique_id])
+                    # Block access to adding any more tuples since the comparison did not match
+                    row_results[recordNum] = None
+                elif not row_results[recordNum] == None:
+                  # Add tuples to the row_results until comparision is made and makes the final decision
+                  row_results[recordNum].append(trple[2])
+    
+    # Move all non-Nones from the row_results into the table_results
+    for recordNum in row_results:
+      if not row_results[recordNum] == None:
+        table_results.append(row_results[recordNum])
+    # If distinct clause, remove duplicates from the return table
     if distinct:
       noDupes = [] 
       [noDupes.append(i) for i in table_results if not noDupes.count(i)] 
