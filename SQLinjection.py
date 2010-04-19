@@ -31,6 +31,8 @@ class SQLinjection:
           while not index > -1: # Read insertion until EndTag
             sql_insert += line.strip() + ' '
             i += 1
+            if i == len(code):
+              raise NameError('SQL: No end sql tag found.')
             line = code[i]
             index = line.find(self.sql_insertion_end_tag)
         # Modify database by SQL statement

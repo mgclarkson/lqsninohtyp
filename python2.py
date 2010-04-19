@@ -27,7 +27,7 @@
 ##    CREATE TABLE -J
 ##    DROP INDEX -J
 ##    DROP TABLE -J
-##    INSERT -J
+##    INSERT -J                     ---second form not implemented
 ##    SELECT -J
 ##    SELECT DISTINCT -J
 ##    SELECT WHERE -J

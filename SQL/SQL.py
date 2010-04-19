@@ -14,7 +14,7 @@ from union import union
 from update import update
 
 DEBUG = False
-DEBUG = True
+# DEBUG = True
 
 class SQL:
   def __init__(self, parent, database, sql_insert):
@@ -62,6 +62,10 @@ class SQL:
         parent.python += self.print_select(select(self))
 
       # Non-standard SQL   
+      elif (case == 'DATABASEPRINT'):
+        self.sql_insert = self.sql_insert[len(case):].strip()
+        s = self.databaseprint()
+        parent.python += s
       elif (case == 'CONTENTS'):
         self.sql_insert = self.sql_insert[len(case):].strip()
         s = select(self)
@@ -72,6 +76,7 @@ class SQL:
         parent.python += s
         self.sql_insert = self.sql_insert[len(case):].strip()
       else:
+        print self.sql_insert
         raise NameError('SQL: Statement incorrect or not yet supported: ' + case)
       if DEBUG: print
           
@@ -79,6 +84,17 @@ class SQL:
 ### Print statements for printing databases for debugs and for sql_insertion of python print statements          
 ###
 
+  # Returns a string for the python file
+  def databaseprint(self):
+    s = 'print "Database:"\n'
+    keys = self.database.keys()
+    keys.sort()
+    for key in keys:
+      s += 'print "' + key + ':' + str(self.database[key]) + '"\n'
+    s += 'print\n'
+    return s
+      
+  # Prints onto the console
   def print_database(self):
     print 'Database:'
     keys = self.database.keys()

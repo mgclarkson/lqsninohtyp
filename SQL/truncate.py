@@ -27,7 +27,7 @@ def truncate(self):
         # Hold the last index of the triple store
         i = len(self.database['triples']) - 1
         # Cycle until you reach the beginning
-        while not i == 0:
+        while not i < 0:
           # Remove all triples that are in the current table
           if recordNum == self.database['triples'][i][0]:
             self.database['triples'].remove(self.database['triples'][i])

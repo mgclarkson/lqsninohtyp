@@ -53,24 +53,6 @@ def alter(self):
     else:
       self.database['datatypes'][table][column][dataType] = -1      
     
-  #ALTER called with DROP COLUMN
-  elif dropCol:
-    table=dropCol.group(3)
-    column=dropCol.group(7)
-    self.sql_insert = self.sql_insert[len(dropCol.group(0)):].strip()
-
-    #column is in the table, drop it
-    if column in self.database[table + '_fields']:
-      self.database[table + '_fields'].remove(column)
-      for trple in self.database['triples']:
-        for unique_id in self.database[table]:
-          if unique_id == trple[0] and column == trple[1]:
-            self.database['triples'].remove(trple)
-      del self.database['datatypes'][table][column]
-    #column doesn't exist, ignore
-    else:
-      print 'Column: ' + column + ' does not exist. Table unchanged.'
-
   #ALTER called with ALTER COLUMN (modify the datatype of the column)
   elif modifyCol:
     table=modifyCol.group(3)
@@ -88,8 +70,27 @@ def alter(self):
         
       if int == '':
         int = -1
+      self.database['datatypes'][table][column] = {}
       self.database['datatypes'][table][column][dataType] = int
 
+    #column doesn't exist, ignore
+    else:
+      print 'Column: ' + column + ' does not exist. Table unchanged.'
+
+  #ALTER called with DROP COLUMN
+  elif dropCol:
+    table=dropCol.group(3)
+    column=dropCol.group(7)
+    self.sql_insert = self.sql_insert[len(dropCol.group(0)):].strip()
+
+    #column is in the table, drop it
+    if column in self.database[table + '_fields']:
+      self.database[table + '_fields'].remove(column)
+      for trple in self.database['triples']:
+        for unique_id in self.database[table]:
+          if unique_id == trple[0] and column == trple[1]:
+            self.database['triples'].remove(trple)
+      del self.database['datatypes'][table][column]
     #column doesn't exist, ignore
     else:
       print 'Column: ' + column + ' does not exist. Table unchanged.'
