@@ -34,7 +34,7 @@
 ##    TRUNCATE TABLE -J
 ##    ALTER TABLE -M
 ##    UPDATE -M'll do
-##    DELETE -M'll do
+##    DELETE -M
 ##    JOINS(4) -M'll do
 ##    UNION -M'll do
 ##    INSERT INTO -M'll do
