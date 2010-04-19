@@ -37,7 +37,6 @@
 ##    DELETE -M
 ##    JOINS(4) -M'll do
 ##    UNION -M'll do
-##    INSERT INTO -M'll do
 ##    WHERE (AND | OR) in WHERE -J'll do
 ##    ORDER BY in SELECT -J'll do
 ##    TOP in SELECT -J'll do
