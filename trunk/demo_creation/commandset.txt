@@ -1,0 +1,10 @@
+alter
+create
+delete
+drop
+insert
+joins
+select
+truncate
+union
+update

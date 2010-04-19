@@ -1,0 +1,21 @@
+for i in range(10):
+  print i,
+print
+
+sql:
+  CREATE TABLE Customers ( 
+    name VARCHAR(100) ,
+    last VARCHAR(15),
+    phone int
+  )
+  INSERT INTO Customers VALUES ('Phil', 'Cannata', 7735647)
+  INSERT INTO Customers VALUES ('Matthew', 'Clarkson', 9875643)
+  INSERT INTO Customers VALUES ('Joaquin', 'Casares', 3451878)
+  INSERT INTO Customers VALUES ('Joaquin', 'Joaquin', 9345879)
+  INSERT INTO Customers VALUES ('Joaquin', 'Joaquin', 5123789)
+  INSERT INTO Customers VALUES ('Joaquin', 'Guadalupe', 8845748)
+  DATABASEPRINT
+  TRUNCATE TABLE Firsts
+  TRUNCATE TABLE Customers
+  DATABASEPRINT
+:sql
