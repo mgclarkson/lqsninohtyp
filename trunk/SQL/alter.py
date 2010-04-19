@@ -83,7 +83,7 @@ def alter(self):
       ###
       ###
       #TODO: modify the column's dataType
-      print table, column, dataType, int
+      if DEBUG: print table, column, dataType, int
       if int == '':
         int = -1
       self.database['datatypes'][table][column][dataType.upper()] = int
