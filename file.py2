@@ -188,7 +188,15 @@ sql:
 :sql
 
 sql:
-  UPDATE new_Customers SET last='Bosey', name='Dose', phone=9111 WHERE last='Jose' AND name='Nosey'
+  UPDATE new_Customers SET last='Bosey', name='Bob' WHERE last='Jose' AND name='Nosey'
+:sql
+
+sql:
+  UPDATE new_Customers SET last='Bosey', name='Bob' WHERE last='Jose'
+:sql
+
+sql:
+  UPDATE new_Customers SET last='Bosey', name='Bob', phone=9343
 :sql
 
 sql:
