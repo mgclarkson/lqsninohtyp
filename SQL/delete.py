@@ -28,13 +28,6 @@ def delete(self):
   rg2 = re.compile(delFr+ws+tableNm,re.IGNORECASE|re.DOTALL)
   delAllRows2 = rg2.search(self.sql_insert) # DELETE FROM (no column comparison)  
     
-  #
-  # Question: is there some counter of how many records there are?
-  # If there is I need to clear it for the delete all rows commands
-  # or decrement it for the other two commands
-  #
-  #  
-    
   #delete rows with two matching column vals
   if delTight:
     table=delTight.group(3)
@@ -56,36 +49,26 @@ def delete(self):
     elif not column in self.database[table + '_fields']:
       print 'Column: ' + column + ' does not exist in table: ' + table + '.  Database unchanged.'
     else:
-      value = eval(value)
+      value = eval(value) #handle the different possible value types
       if not isinstance(value, int):
         value = value.replace('\'', '') #strip the opening and closing quotes for the value if string     
-      foundIds = []
+      foundIds = [] #list of to-be-delete indexes
       for unique_id in self.database[table]:
         i = len(self.database['triples']) - 1
         while i >= 0:
           if unique_id == self.database['triples'][i][0] and column == self.database['triples'][i][1] and value == self.database['triples'][i][2]:
-            foundIds.append(unique_id)            
+            foundIds.append(unique_id) #if the column and data match, add it to the delete list            
           i -= 1
-      for index in foundIds:
-        print 'index:'
-        print index
+      for index in foundIds: #go through delete list and remove all of its elements triple database        
         j = len(self.database['triples']) - 1
         while j >= 0:
           if index == self.database['triples'][j][0]:
-            print 'removing:'
-            print self.database['triples'][j]
             self.database['triples'].remove(self.database['triples'][j])           
           j -= 1
-        for element in self.database[table]:
-          print element
+        for element in self.database[table]: #after removing the triple, remove the indexes from the 'table' table
           if element == index:
             self.database[table].remove(element)
-          
-      #TODO: delete index number
-        
-          
-          
-      
+     
   #delete all rows
   elif delAllRows1 or delAllRows2:    
     if delAllRows1:
