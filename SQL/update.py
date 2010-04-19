@@ -1,7 +1,7 @@
 import re
 
 DEBUG = False
-# DEBUG = True
+DEBUG = True
 
 def update(self):
   ws='(\\s+)'	# white space
@@ -20,7 +20,6 @@ def update(self):
     
   rg1 = re.compile(updateRec+ws+tableNm+ws+set+ws+setVars+ws+whereTo+ws+colNm1+eq+val1+ws+a+ws+colNm2+eq+val2,re.IGNORECASE|re.DOTALL)
   updateTight = rg1.search(self.sql_insert) # UPDATE (two column comparison)
-  print updateRec+ws+tableNm+ws+set+ws+setVars+ws+whereTo+ws+colNm1+eq+val1+ws+a+ws+colNm2+eq+val2
     
   rg2 = re.compile(updateRec+ws+tableNm+ws+set+ws+setVars+ws+whereTo+ws+colNm1+eq+val1,re.IGNORECASE|re.DOTALL)
   updateLoose = rg2.search(self.sql_insert) # UPDATE (one column comparison)
@@ -52,6 +51,9 @@ def update(self):
     print listOfCols
     print listOfValues
 
+    #go through the lists of cols and values, updating all databases appropriately
+    #be sure to match against two columns and values
+  
   
   ####  
   #update records with one matching column val
@@ -74,6 +76,9 @@ def update(self):
     
     print listOfCols
     print listOfValues
+    
+    #go through the lists of cols and values, updating all databases appropriately
+    #be sure to match against one column and value
 
   
   ####  
@@ -92,7 +97,19 @@ def update(self):
       remEq = i.strip().split('=')
       listOfCols.append(remEq[0])
       listOfValues.append(eval(remEq[1])) 
-    
+
+    col = 0
+    while col < len(listOfCols):
+      if listOfCols[col] in self.database[table + '_fields']:
+        for unique_id in self.database[table]:
+          i = len(self.database['triples']) - 1
+          while i >= 0:
+            if unique_id == self.database['triples'][i][0] and listOfCols[col] == self.database['triples'][i][1]:
+              self.database['triples'][i] = [unique_id, listOfCols[col], listOfValues[col]]              
+            i -= 1
+      else:
+        print 'Column: ' + listOfCols[col] + ' does not exist.'
+      col += 1      
   
   #incorrect syntax on the UPDATE call 
   else:
