@@ -188,5 +188,9 @@ sql:
 :sql
 
 sql:
+  UPDATE new_Customers SET last='Bosey', name='Dose', phone=9111 WHERE last='Jose' AND name='Nosey'
+:sql
+
+sql:
   DELETE FROM new_Customers
 :sql
