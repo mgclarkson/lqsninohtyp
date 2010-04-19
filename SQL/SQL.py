@@ -74,6 +74,10 @@ class SQL:
         raise NameError('SQL: Statement incorrect or not yet supported: ' + case)
       if DEBUG: print
           
+###
+### Print statements for printing databases for debugs and for sql_insertion of python print statements          
+###
+
   def print_database(self):
     print 'Database:'
     keys = self.database.keys()
