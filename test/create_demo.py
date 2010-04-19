@@ -4,9 +4,16 @@
 ### create.py  
 #####################  
   
+#!/usr/bin/env python2.py
+
 for i in range(10):
   print i,
 print
+
+#sql:
+  CREATE TABLE neverBuild ( blah VARCHAR(5) )
+  INSERT INTO neverBuild VALUES ('NOPE')
+:sql
 
 sql:
   CREATE TABLE Customers ( 
@@ -30,13 +37,16 @@ sql:
 
 sql: DATABASEPRINT :sql
 
-
 =======================================================
 ### Converted Python File:
+
+#!/usr/bin/env python2.py
 
 for i in range(10):
   print i,
 print
+
+#
 
 
 
@@ -52,7 +62,6 @@ print "datatypes:{'Noncustomers': {'phone': {'INT': -1}, 'last': {'VARCHAR': '15
 print "triples:[]"
 print "valid_datatypes:['VARCHAR', 'INT', 'CHAR', 'TEXT', 'BIT', 'BIGINT', 'REAL']"
 print
-
 
 
 =======================================================

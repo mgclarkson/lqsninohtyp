@@ -4,6 +4,8 @@
 ### drop.py  
 #####################  
   
+#!/usr/bin/env python2.py
+
 for i in range(10):
   print i,
 print
@@ -35,6 +37,8 @@ sql:
 
 =======================================================
 ### Converted Python File:
+
+#!/usr/bin/env python2.py
 
 for i in range(10):
   print i,
