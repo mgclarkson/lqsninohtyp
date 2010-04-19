@@ -54,14 +54,11 @@
 ##    NULL in WHERE & INSERT
 ##    
 ##  DATATYPES in INSERT (CREATE already implemented -J):
-##    char(n)
+##    varchar(n)
 ##    text
 ##    bit
 ##    bigint
 ##    real
-##    date?
-##    time?
-##    datetime?
 ##    
 ##  NOT IMPLEMETING:
 ##    CREATE DB

@@ -35,6 +35,7 @@ sql:  INSERT INTO Customers VALUES ('Phil', 'Cannata'):sql
 
 sql:  INSERT INTO Customers VALUES ('Matthew', 'Clarkson')
   INSERT INTO Customers VALUES ('Joaquin', 'Casares')
+  INSERT INTO Customers VALUES ('Joaquin', 'Casares')
 :sql
 
 sql:
