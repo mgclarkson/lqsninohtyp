@@ -32,10 +32,51 @@ def delete(self):
   if delTight:
     table=delTight.group(3)
     column1=delTight.group(7) #TODO: check these numbers
+    print column1
     value1=delTight.group(9) #TODO: check these numbers
+    print value1
     column2=delTight.group(11) #TODO: check these numbers
+    print column2
     value2=delTight.group(13) #TODO: check these numbers
+    print value2
     self.sql_insert = self.sql_insert[len(delTight.group(0)):].strip()
+    
+    if not table in self.database:
+      print 'Table: ' + table + ' does not exist. Database unchanged.'
+    elif not column1 in self.database[table + '_fields']:
+      print 'Column: ' + column1 + ' does not exist in table: ' + table + '.  Database unchanged.'
+    elif not column2 in self.database[table + '_fields']:
+      print 'Column: ' + column2 + ' does not exist in table: ' + table + '.  Database unchanged.'
+    else:
+      value1 = eval(value1) #handle the different possible value types
+      value2 = eval(value2) 
+      if not isinstance(value1, int):
+        value1 = value1.replace('\'', '') #strip the opening and closing quotes for the value if string     
+      if not isinstance(value2, int):
+        value2 = value2.replace('\'', '') #strip the opening and closing quotes for the value if string 
+      
+      foundIds = [] #list of to-be-delete indexes
+      for unique_id in self.database[table]:
+        i = len(self.database['triples']) - 1
+        while i >= 0:
+          if unique_id == self.database['triples'][i][0] and column1 == self.database['triples'][i][1] and value1 == self.database['triples'][i][2]:
+            j = len(self.database['triples']) - 1
+            while k >= 0:
+              if unique_id == self.database['triples'][k][0] and column2 == self.database['triples'][k][1] and value2 == self.database['triples'][k][2]:
+                foundIds.append(unique_id) #if the columns and datas match, add it to the delete list
+                break
+              j -= 1
+          i -= 1
+      
+      for index in foundIds: #go through delete list and remove all of its elements triple database        
+        j = len(self.database['triples']) - 1
+        while j >= 0:
+          if index == self.database['triples'][j][0]:
+            self.database['triples'].remove(self.database['triples'][j])           
+          j -= 1
+        for element in self.database[table]: #after removing the triple, remove the indexes from the 'table' table
+          if element == index:
+            self.database[table].remove(element)
           
   #delete rows with one matching column val
   elif delLoose:    
