@@ -1,0 +1,26 @@
+for i in range(10):
+  print i,
+print
+
+sql:
+  CREATE TABLE Customers ( 
+    name VARCHAR(100) ,
+    last VARCHAR(15),
+    phone int,
+    birthday VARCHAR(20)
+  )
+  CREATE TABLE Noncustomers ( 
+    name VARCHAR(100) ,
+    last VARCHAR(15),
+    phone int
+  )
+  CREATE TABLE Housing ( 
+    person VARCHAR(100) ,
+    floor int,
+    room VARCHAR(4),
+    phone int
+  )
+:sql
+
+sql: DATABASEPRINT :sql
+

@@ -1,0 +1,22 @@
+for i in range(10):
+  print i,
+print
+
+sql:
+  CREATE TABLE new_Customers ( 
+    name VARCHAR(100) ,
+    last VARCHAR(15),
+    phone int,
+    birthday int
+  )
+  DATABASEPRINT
+  
+  ALTER TABLE new_Customers ADD gender VARCHAR(1)
+  DATABASEPRINT
+  
+  ALTER TABLE new_Customers ALTER COLUMN gender INT
+  DATABASEPRINT
+  
+  ALTER TABLE new_Customers DROP COLUMN birthday
+  DATABASEPRINT
+:sql
