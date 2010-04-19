@@ -140,7 +140,7 @@ sql:
       INSERT INTO new_Customers VALUES ('Lake', 'Travis', 911, 1)
       INSERT INTO new_Customers VALUES ('Absente', 'Mee', 302740, 8)
       INSERT INTO new_Customers VALUES ('Burbple', 'Durple', 8837232, 7)
-      INSERT INTO new_Customers VALUES ('Hes', 'Uxdix', 8675309, 2)
+      INSERT INTO new_Customers VALUES ('Hes', 'ABob', 8675309, 2)
 :sql
 
 sql:
@@ -152,13 +152,25 @@ sql:
 :sql
 
 sql:
+  DELETE FROM new_Customers WHERE last='Nope'
+:sql
+
+sql:
+  DELETE FROM new_Customers WHERE phone='ABob'
+:sql
+
+sql:
+  DELETE FROM new_Customers WHERE phone=8837232
+:sql
+
+sql:
+  DELETE FROM new_Customers WHERE last='ABob'
+:sql
+
+sql:
   ALTER TABLE new_Customers DROP COLUMN birthday
 :sql
 
 sql:
   DELETE FROM new_Customers
 :sql
-
-#sql:
-  #DELETE FROM new_Customers
-#:sql
