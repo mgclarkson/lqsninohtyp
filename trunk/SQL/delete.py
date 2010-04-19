@@ -14,7 +14,7 @@ def delete(self):
   colNm1='((?:[a-z][a-z0-9_]*))'	# columnName  
   val1='((?:\'?[a-z0-9_]*\'?))'	# first value  
   colNm2='((?:[a-z][a-z0-9_]*))'	# columnName
-  val2='((?:[a-z0-9_]*))'	# first value 
+  val2='((?:\'?[a-z0-9_]*\'?))'	# first value 
   
   rg4 = re.compile(delFr+ws+tableNm+ws+whereTo+ws+colNm1+eq+val1+ws+a+ws+colNm2+eq+val2,re.IGNORECASE|re.DOTALL)
   delTight = rg4.search(self.sql_insert) # DELETE FROM (two column comparison)
