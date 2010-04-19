@@ -61,15 +61,32 @@ class SQL:
         joins(self)
       elif (case == 'UPDATE'):
         update(self)
-      elif (case == 'UNION'):
-        union(self)
       elif (case == 'PRINT'):
         self.sql_insert = self.sql_insert[len(case):].strip()
         parent.python += self.print_select(select(self))
 
       # Non-standard SQL   
       elif (case == 'DATABASEPRINT'):
-        self.sql_insert = self.sql_insert[len(case):].strip()
+        self.sql_insert = self.sql_insert[len(case):].strip()import re
+
+DEBUG = False
+# DEBUG = True
+
+def union(self):
+  if(1):
+    pass
+
+
+
+
+
+
+
+  #incorrect syntax on the UNION call 
+  else:
+    raise NameError('SQL: Statement incorrect or not yet supported:\n' + self.sql_insert)
+
+  if DEBUG: self.print_database()
         s = self.databaseprint()
         parent.python += s
       elif (case == 'CONTENTS'):
