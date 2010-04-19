@@ -37,12 +37,12 @@
 ##    DELETE -M
 ##    JOINS(4) -M'll do
 ##    UNION -M'll do
-##    WHERE (AND | OR) in WHERE -J'll do
-##    ORDER BY in SELECT -J'll do
+##    WHERE (AND | OR) in WHERE -M'll do
+##    ORDER BY in SELECT -J
 ##    TOP in SELECT -J'll do
-##    LIKE in WHERE -J'll do
-##    IN in WHERE -J'll do
-##    BETWEEN in WHERE -J'll do
+##    LIKE in WHERE -M'll do
+##    IN in WHERE -M'll do
+##    BETWEEN in WHERE -M'll do
 ##    WILDCARDS? in WHERE
 ##    ALIAS?
 ##    SELECT INTO

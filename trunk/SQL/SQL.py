@@ -45,6 +45,7 @@ class SQL:
         insert(self)
       elif (case == 'SELECT'):
         s = select(self)
+        case = self.sql_insert[0:self.sql_insert.find(' ')]
         parent.python += s
       elif (case == 'TRUNCATE'):
         truncate(self)
