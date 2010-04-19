@@ -47,9 +47,14 @@ def drop(self):
     if table in self.database:
       # Loop through all the triples and remove the triples where the recordNum match
       for recordNum in self.database[table]:
-        for trple in self.database['triples']:
-          if recordNum == trple[0]:
-            self.database['triples'].remove(trple)
+        # Hold the last index of the triple store
+        i = len(self.database['triples']) - 1
+        # Cycle until you reach the beginning
+        while not i < 0:
+          # Remove all triples that are in the current table
+          if recordNum == self.database['triples'][i][0]:
+            self.database['triples'].remove(self.database['triples'][i])
+          i -= 1
       # Remove all traces of the table
       del self.database[table + '_fields']
       del self.database[table]

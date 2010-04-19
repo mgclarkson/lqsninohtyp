@@ -1,7 +1,7 @@
 import re
 
 DEBUG = False
-DEBUG = True
+# DEBUG = True
 
 def update(self):
   ws='(\\s+)'	# white space
@@ -47,9 +47,6 @@ def update(self):
       remEq = i.strip().split('=')
       listOfCols.append(remEq[0])
       listOfValues.append(eval(remEq[1])) 
-    
-    print listOfCols
-    print listOfValues
 
     #go through the lists of cols and values, updating all databases appropriately
     #be sure to match against two columns and values
@@ -73,9 +70,6 @@ def update(self):
       remEq = i.strip().split('=')
       listOfCols.append(remEq[0])
       listOfValues.append(eval(remEq[1])) 
-    
-    print listOfCols
-    print listOfValues
     
     #go through the lists of cols and values, updating all databases appropriately
     #be sure to match against one column and value

@@ -12,13 +12,13 @@ def select(self):
   re3='(FROM)'	# Word 2
   re4='((?:[a-z][a-z0-9_]*))'	# Variable Name 1
 
-  re12='(SELECT\\s+DISTINCT)'	# Word 1
+  re12='(^SELECT\\s+DISTINCT)'	# Word 1
   
-  re13='(WHERE)'	# Word 1
+  re13='(^WHERE)'	# Word 1
   re53='(.?.?)'	# Variable Name 2
   re43='((?:[a-z0-9_]*))'	# Variable Name 1
   
-  re14='(ORDER)'	# Word 1
+  re14='(^ORDER)'	# Word 1
   re24='(BY)'	# Word 1
   re34='((?:[a-z0-9_]*))'
   re44='((ASC|DESC)?)'
@@ -30,11 +30,9 @@ def select(self):
   rg = re.compile(re12+ws+re2+ws+re3+ws+re4,re.IGNORECASE|re.DOTALL)
   distinct = rg.search(self.sql_insert)
   
-  rg = re.compile(re13+ws+re4+ws+re53+ws+re43,re.IGNORECASE|re.DOTALL)
-  where = rg.search(self.sql_insert)
+  rgwhere = re.compile(re13+ws+re4+ws+re53+ws+re43,re.IGNORECASE|re.DOTALL)
   
-  rg = re.compile(re14+rws+re24+ws+re34+ws+re44,re.IGNORECASE|re.DOTALL)
-  order = rg.search(self.sql_insert)
+  rgorder = re.compile(re14+rws+re24+ws+re34+ws+re44,re.IGNORECASE|re.DOTALL)
   
   # If caught by regex
   if m or distinct:
@@ -48,16 +46,19 @@ def select(self):
       table = m.group(7)
       self.sql_insert = self.sql_insert[len(m.group(0)):].strip()
       
-    # Trim sql_insert to size
+    where = rgwhere.search(self.sql_insert)
     if where:
       comparison_fieldname=where.group(3)
       operator=where.group(5)
       value=where.group(7)
+      # Trim sql_insert to size
       self.sql_insert = self.sql_insert[len(where.group(0)):].strip()
       
+    order = rgorder.search(self.sql_insert)
     if order:
       orderField = order.group(5)
       orderOrder = order.group(7).upper()
+      # Trim sql_insert to size
       self.sql_insert = self.sql_insert[len(order.group(0)):].strip()
       
     if selection == '*':
