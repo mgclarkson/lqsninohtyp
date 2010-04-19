@@ -1,3 +1,5 @@
+#!/usr/bin/env python2.py
+
 for i in range(10):
   print i,
 print
@@ -19,3 +21,10 @@ sql:
 sql: DATABASEPRINT :sql
 
 sql:PRINT SELECT * FROM Customers:sql
+
+list = sql:TRIPLES:sql
+
+print 'Here are the triples!'
+for i in list:
+  print i,
+print

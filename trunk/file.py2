@@ -49,15 +49,3 @@ list = sql:TRIPLES:sql
 for i in sql:TRIPLES:sql:
   print i
   
-sql: 
-DROP INDEX name ON Customers 
-DROP INDEX blah ON Customers 
-DROP TABLE Customers
-DROP TABLE Nope
-TRUNCATE TABLE Firsts
-:sql
-
-sql:
-  INSERT INTO Customers VALUES ('JJ', 'Casares', )
-:sql
-
