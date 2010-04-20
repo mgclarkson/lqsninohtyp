@@ -6,7 +6,7 @@ DEBUG = False
 def alter(self):
   rws='(\\s+)'	# White Space 1
   ws='(\\s*)'	# White Space 1
-  altTable='(ALTER\\s+TABLE)'	# alterTable
+  altTable='(^ALTER\\s+TABLE)'	# alterTable
   tableNm='((?:[a-z][a-z0-9_]*))'	# tableName
   colNm='((?:[a-z][a-z0-9_]*))'	# columnName
   dataTy='((?:[a-z][a-z0-9_]*))'	# dataType
