@@ -80,14 +80,16 @@ def select(self):
       for recordNum in self.database[table]:
         # If the triple is of that table:... else: loop at next triple
         if recordNum == trple[0]:
+          # Cycle through all the fieldnames in the list of fields that are to be selected
           for fieldname in selection_list:
+            # Check if this fieldname in this trple is in the selection_list
             if fieldname.strip() == trple[1]:
-              # This fieldname is in the selection_list, so:
               
               # Initalize return structure for this recordNum
               if not recordNum in row_results:
                 row_results[recordNum] = []
                 
+              # If order regex is found on this fieldname, hold onto the number for later.
               if order and trple[1] == orderField:
                 orderNum = len(row_results[recordNum])
                 
