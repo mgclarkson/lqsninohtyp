@@ -1,11 +1,11 @@
 import re
 
 DEBUG = False
-# DEBUG = True
+DEBUG = True
 
 def update(self):
   ws='(\\s+)'	# white space
-  updateRec='(UPDATE)'	
+  updateRec='(^UPDATE)'	
   set='(SET)'	
   whereTo='(WHERE)' 
   a='(AND)'
@@ -47,9 +47,42 @@ def update(self):
       remEq = i.strip().split('=')
       listOfCols.append(remEq[0])
       listOfValues.append(eval(remEq[1])) 
-
-    #go through the lists of cols and values, updating all databases appropriately
-    #be sure to match against two columns and values
+      
+    print listOfCols
+    print listOfValues
+    
+    value1 = eval(value1) #handle the different possible value types
+    value2 = eval(value2)
+    if not isinstance(value1, int):
+      value1 = value1.replace('\'', '') #strip the opening and closing quotes for the value of string
+    if not isinstance(value2, int):
+      value2 = value2.replace('\'', '')
+    
+    foundIds = [] #list of to-be-updated indexes
+    for unique_id in self.database[table]: #acquire the appropriate unique_id's: those for this table
+      i = len(self.database['triples']) - 1
+      while i >= 0: #go through all triples starting at the last trying to match to first value
+        if unique_id == self.database['triples'][i][0] and column1 == self.database['triples'][i][1] and value1 == self.database['triples'][i][2]:
+          k = len(self.database['triples']) - 1
+          while k >= 0: #go through all triples starting at the last trying to match to second value
+            if unique_id == self.database['triples'][k][0] and column2 == self.database['triples'][k][1] and value2 == self.database['triples'][k][2]:
+              foundIds.append(unique_id) #if the columns and values match, add it to the update list
+            k -= 1
+        i -= 1
+    
+    col = 0
+    while col < len(listOfCols): #go through each of the source cols in the update command
+      if listOfCols[col] in self.database[table + '_fields']:
+        for fId in foundIds: #iterate through to-be-updated list
+          i = len(self.database['triples']) - 1
+          while i >= 0:
+            if fId == self.database['triples'][i][0] and listOfCols[col] == self.database['triples'][i][1]:
+              self.database['triples'][i] = [fId, listOfCols[col], listOfValues[col]] #update the values of the triples             
+            i -= 1
+      else:
+        print 'Column: ' + listOfCols[col] + ' does not exist.'
+      col += 1       
+      
   
   
   ####  
@@ -70,10 +103,35 @@ def update(self):
       remEq = i.strip().split('=')
       listOfCols.append(remEq[0])
       listOfValues.append(eval(remEq[1])) 
+      
+    print listOfCols
+    print listOfValues
     
-    #go through the lists of cols and values, updating all databases appropriately
-    #be sure to match against one column and value
-
+    value1 = eval(value1) #handle the different possible value types
+    if not isinstance(value1, int):
+      value1 = value1.replace('\'', '') #strip the opening and closing quotes for the value if string  
+    
+    foundIds = [] #list of to-be-updated indexes
+    for unique_id in self.database[table]: #acquire the appropriate unique_id's: those for this table
+      i = len(self.database['triples']) - 1
+      while i >= 0: #go through all triples starting at the last
+        if unique_id == self.database['triples'][i][0] and column1 == self.database['triples'][i][1] and value1 == self.database['triples'][i][2]:
+          foundIds.append(unique_id) #if the column and data match, add it to the update list            
+        i -= 1
+    
+    col = 0
+    while col < len(listOfCols): #go through each of the source cols in the update command
+      if listOfCols[col] in self.database[table + '_fields']:
+        for fId in foundIds: #iterate through to-be-updated list
+          i = len(self.database['triples']) - 1
+          while i >= 0:
+            if fId == self.database['triples'][i][0] and listOfCols[col] == self.database['triples'][i][1]:
+              self.database['triples'][i] = [fId, listOfCols[col], listOfValues[col]] #update the values of the triples             
+            i -= 1
+      else:
+        print 'Column: ' + listOfCols[col] + ' does not exist.'
+      col += 1       
+      
   
   ####  
   #update all records

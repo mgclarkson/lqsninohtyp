@@ -5,8 +5,8 @@ DEBUG = False
 
 def delete(self):
   ws='(\\s+)'	# white space
-  delFr='(DELETE\\s+FROM)'	# deleteFrom command
-  delStarFr='(DELETE\\s+\*\\s+FROM)'	# deleteStarFrom command
+  delFr='(^DELETE\\s+FROM)'	# deleteFrom command
+  delStarFr='(^DELETE\\s+\*\\s+FROM)'	# deleteStarFrom command
   whereTo='(WHERE)' 
   a='(AND)' 
   eq='(=)' # equal sign
@@ -18,9 +18,11 @@ def delete(self):
   
   rg4 = re.compile(delFr+ws+tableNm+ws+whereTo+ws+colNm1+eq+val1+ws+a+ws+colNm2+eq+val2,re.IGNORECASE|re.DOTALL)
   delTight = rg4.search(self.sql_insert) # DELETE FROM (two column comparison)
+  print delFr+ws+tableNm+ws+whereTo+ws+colNm1+eq+val1+ws+a+ws+colNm2+eq+val2
     
   rg3 = re.compile(delFr+ws+tableNm+ws+whereTo+ws+colNm1+eq+val1,re.IGNORECASE|re.DOTALL)
   delLoose = rg3.search(self.sql_insert) # DELETE FROM (one column comparison)
+  print delFr+ws+tableNm+ws+whereTo+ws+colNm1+eq+val1
   
   rg1 = re.compile(delStarFr+ws+tableNm,re.IGNORECASE|re.DOTALL)
   delAllRows1 = rg1.search(self.sql_insert) # DELETE * FROM (no column comparsion)
@@ -32,6 +34,11 @@ def delete(self):
   #delete rows with two matching column vals
   ####  
   if delTight:
+    print 'delTight'
+    print delTight.group(0)
+    print 'yep thats the problem'
+    print 'try this:'
+    print self.sql_insert[len(delTight.group(0)):].strip()
     table=delTight.group(3)
     column1=delTight.group(7)
     value1=delTight.group(9) 
@@ -79,7 +86,7 @@ def delete(self):
   ####          
   #delete rows with one matching column val
   ####  
-  elif delLoose:    
+  elif delLoose: 
     table=delLoose.group(3)   
     column=delLoose.group(7) 
     value=delLoose.group(9)
