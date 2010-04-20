@@ -6,7 +6,7 @@ DEBUG = False
 def truncate(self):
   if DEBUG: self.print_database()
   
-  re1='(TRUNCATE)'	# Word 1
+  re1='(^TRUNCATE)'	# Word 1
   rws='(\\s+)'	# White Space 1
   ws='(\\s*)'	# White Space 1
   re3='(TABLE)'	# Word 2

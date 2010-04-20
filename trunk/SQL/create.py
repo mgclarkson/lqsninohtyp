@@ -4,7 +4,7 @@ DEBUG = False
 # DEBUG = True
 
 def create(self):
-  re1='(CREATE)'	# Word 1
+  re1='(^CREATE)'	# Word 1
   rws='(\\s+)'	# White Space 1
   ws='(\\s*)'	# White Space 1
   re3='(TABLE)'	# Word 2

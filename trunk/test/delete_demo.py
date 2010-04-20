@@ -36,8 +36,6 @@ sql:
   PRINT SELECT * FROM new_Customers
   
   DELETE FROM new_Customers WHERE last='ABob'
-:sql
-sql:
   PRINT SELECT * FROM new_Customers
 
   DELETE FROM new_Customers WHERE last='Mee' AND phone=98478
@@ -108,7 +106,6 @@ print '|  See           |  Mee           |  302740        |  1             |'
 print '|  Jose          |  Nosey         |  928223        |  2             |'
 print '|  Miggh         |  Tyfine        |  124967        |  2             |'
 print '|--------------------------------------------------------------------'
-
 print 'new_Customers:'
 print '|--------------------------------------------------------------------'
 print '|  name          |  last          |  phone         |  birthday      |'

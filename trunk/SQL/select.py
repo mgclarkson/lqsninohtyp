@@ -4,7 +4,7 @@ DEBUG = False
 # DEBUG = True
 
 def select(self):
-  re1='(SELECT)'	# Word 1
+  re1='(^SELECT)'	# Word 1
   rws='(\\s+)'	# White Space 1
   ws='(\\s*)'	# White Space 1
   # re2='((?:[a-z][a-z0-9_]*,?\\s*)*|\*)'	THIS MAKES IT LAG....

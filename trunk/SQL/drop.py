@@ -4,7 +4,7 @@ DEBUG = False
 # DEBUG = True
 
 def drop(self):
-  re1='(DROP)'	# Variable Name 1
+  re1='(^DROP)'	# Variable Name 1
   rws='(\\s+)'	# White Space 1
   ws='(\\s*)'	# White Space 1
   re3='(INDEX)'	# Variable Name 2

@@ -4,7 +4,7 @@ DEBUG = False
 # DEBUG = True
 
 def insert(self):
-  re1='(INSERT)'	# Word 1
+  re1='(^INSERT)'	# Word 1
   rws='(\\s+)'	# White Space 1
   ws='(\\s*)'	# White Space 1
   re3='(INTO)'	# Word 2
