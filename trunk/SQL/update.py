@@ -1,7 +1,7 @@
 import re
 
 DEBUG = False
-DEBUG = True
+#DEBUG = True
 
 def update(self):
   ws='(\\s+)'	# white space
