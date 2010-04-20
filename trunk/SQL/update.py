@@ -47,9 +47,6 @@ def update(self):
       remEq = i.strip().split('=')
       listOfCols.append(remEq[0])
       listOfValues.append(eval(remEq[1])) 
-      
-    print listOfCols
-    print listOfValues
     
     value1 = eval(value1) #handle the different possible value types
     value2 = eval(value2)
@@ -103,9 +100,6 @@ def update(self):
       remEq = i.strip().split('=')
       listOfCols.append(remEq[0])
       listOfValues.append(eval(remEq[1])) 
-      
-    print listOfCols
-    print listOfValues
     
     value1 = eval(value1) #handle the different possible value types
     if not isinstance(value1, int):
