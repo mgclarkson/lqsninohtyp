@@ -36,7 +36,7 @@
 ##    UPDATE -M
 ##    DELETE -M
 ##    JOINS(4) -M'll do
-##    UNION -M'll do
+##    UNION -M
 ##    WHERE (AND | OR) in WHERE -M'll do
 ##    ORDER BY in SELECT -J
 ##    TOP in SELECT -J'll do
