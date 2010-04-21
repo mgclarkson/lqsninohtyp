@@ -50,10 +50,44 @@ class SQL:
           self.sql_insert = self.sql_insert[len(case):].strip()
           s1 = eval(s)
           s = select(self)
-          s2 = eval(s)
-          print s1, '\n', s2, 1111111111111111
-        if join_union_case == 'INNER' or join_union_case == 'LEFT' or join_union_case == 'RIGHT' or join_union_case == 'FULL':
-          s = join(self)
+          s2 = eval(s)            
+          if len(s1[0]) != len(s2[0]):           
+            print 'SQL: each SELECT statement within the UNION must have the same number of columns.'
+            s = ''
+          else:
+            wrongTypes = 0
+            i = len(s1[0]) - 1
+            while i >= 0: #iterate through the first tuple
+              if not isinstance(s1[0][i], type(s2[0][i])):
+                print 'SQL: each SELECT statement within the UNION must have columns of the same data types in the same order.'
+                s = ''
+                wrongTypes = 1 #flag indicates that elements of the two selects aren't of the same data types
+                break
+              i -= 1
+            if not wrongTypes:
+                ret = []
+                for trple1 in s1:
+                  ret.append(trple1) #append all triples in the first set to the output set
+                for trple2 in s2:
+                  found = 0
+                  for addedTrple in s1:
+                    if trple2 == addedTrple: #if found in both the first and second don't append it again to the output set
+                      found = 1
+                      break
+                  if found == 0: #if not found in the second set append it to the output set
+                    ret.append(trple2)
+     
+                x = ", ".join(map(str, ret))
+                s = '[' + x + ']'              
+                print s
+                ##
+          		## TODO: do we need to do something else with this s?  
+          		## 
+          		##
+          		##
+          		##
+        elif join_union_case == 'INNER' or join_union_case == 'LEFT' or join_union_case == 'RIGHT' or join_union_case == 'FULL':
+          s = joins(self)
         parent.python += s
       elif (case == 'TRUNCATE'):
         truncate(self)

@@ -38,20 +38,18 @@ def alter(self):
     #column has already been created, throw error
     elif column in self.database[table+'_fields']:
       raise NameError('SQL: Cannot add column, it already exists:\n' + self.sql_insert)
+    # Checks to see if dataType is a valid datatype
+    elif not dataType in self.database['valid_datatypes']:
+      raise NameError('SQL: Datatype not yet supported:\n' + self.sql_insert)
     #append new column to database
     else:
-      self.database[table+'_fields'].append(column)
-      
-    # Checks to see if dataType is a valid datatype
-    if not dataType in self.database['valid_datatypes']:
-      raise NameError('SQL: Datatype not yet supported:\n' + self.sql_insert)
-    
-    self.database['datatypes'][table][column] = {}
-    #if the dataType has a size associated with it
-    if int:
-      self.database['datatypes'][table][column][dataType] = int
-    else:
-      self.database['datatypes'][table][column][dataType] = -1      
+      self.database[table+'_fields'].append(column)    
+      self.database['datatypes'][table][column] = {}
+      #if the dataType has a size associated with it
+      if int:
+        self.database['datatypes'][table][column][dataType] = int
+      else:
+        self.database['datatypes'][table][column][dataType] = -1      
     
   #ALTER called with ALTER COLUMN (modify the datatype of the column)
   elif modifyCol:
