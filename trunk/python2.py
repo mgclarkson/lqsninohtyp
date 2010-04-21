@@ -33,7 +33,7 @@
 ##    SELECT WHERE -J
 ##    TRUNCATE TABLE -J
 ##    ALTER TABLE -M
-##    UPDATE -M'll do
+##    UPDATE -M
 ##    DELETE -M
 ##    JOINS(4) -M'll do
 ##    UNION -M'll do
