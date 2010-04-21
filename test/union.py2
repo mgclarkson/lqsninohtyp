@@ -57,6 +57,10 @@ sql:
   UNION
   SELECT name, last FROM new_Customers
   
+  SELECT name, last, phone FROM Customers
+  UNION
+  SELECT name, last, phone FROM new_Customers
+  
   SELECT last, name FROM Customers
   UNION
   SELECT last, name FROM new_Customers
