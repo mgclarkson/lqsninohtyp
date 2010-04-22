@@ -54,6 +54,61 @@ def select(self):
       # Trim sql_insert to size
       self.sql_insert = self.sql_insert[len(where.group(0)):].strip()
       
+      if not table in self.database:
+        raise NameError('SQL: Specified table doesn\'t exist:\n' + self.sql_insert)
+      #column has already been created, throw error
+      elif not comparison_fieldname in self.database[table+'_fields']:
+        raise NameError('SQL: Column doesn\'t exist:\n' + self.sql_insert)
+    
+      compHoldsIndices = []
+      operator = operator.strip()
+      if isinstance(value, int):
+        value = eval(value)
+      if operator == '>':
+        for trple in self.database['triples']:
+          if trple[1] == comparison_fieldname:
+            if value > trple[2]:
+              compHoldsIndices.append(trple[0]) #append this triple's index to the resultIndex array
+      elif operator == '<':
+        for trple in self.database['triples']:
+          if trple[1] == comparison_fieldname:
+            if value < trple[2]:
+              compHoldsIndices.append(trple[0]) #append this triple's index to the resultIndex array
+      elif operator == '=':
+        for trple in self.database['triples']:
+          if trple[1] == comparison_fieldname:
+            if value == trple[2]:
+              compHoldsIndices.append(trple[0]) #append this triple's index to the resultIndex array
+      elif operator == '<>':
+        for trple in self.database['triples']:
+          if trple[1] == comparison_fieldname:
+            if value != trple[2]:
+              compHoldsIndices.append(trple[0]) #append this triple's index to the resultIndex array     
+      elif operator == '>=':
+        for trple in self.database['triples']:
+          if trple[1] == comparison_fieldname:
+            if value >= trple[2]:
+              compHoldsIndices.append(trple[0]) #append this triple's index to the resultIndex array
+      elif operator == '<=':
+        for trple in self.database['triples']:
+          if trple[1] == comparison_fieldname:
+            if value <= trple[2]:
+              compHoldsIndices.append(trple[0]) #append this triple's index to the resultIndex array     
+      elif operator == 'BETWEEN':
+        print 'BETWEEN'   
+      elif operator == 'LIKE':
+        print 'LIKE'
+      elif operator == 'IN':
+        print 'IN'
+      else:
+        print 'SQL: incorrect operator \'' + operator +'\''  
+      
+      i = 0
+      while i < len(compHoldsIndices):
+        pass
+        i += 1
+        #append all the output fields with indices in the compHoldsIndices array into the output array
+      
     order = rgorder.search(self.sql_insert)
     if order:
       orderField = order.group(5)
