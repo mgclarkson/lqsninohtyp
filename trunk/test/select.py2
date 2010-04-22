@@ -33,8 +33,23 @@ sql:
   SELECT name, last, phone FROM Customers WHERE phone > 6001234
 :sql
 sql:
+  SELECT name, last, phone FROM Customers WHERE phone < 7735647
+:sql
+sql:
   SELECT name, last, phone FROM Customers WHERE phone <> 7735647
 :sql
+sql:
+  SELECT name, last, phone FROM Customers WHERE phone <= 7735647
+:sql
+sql:
+  SELECT name, last, phone FROM Customers WHERE phone >= 7735647
+:sql
+sql:
+  SELECT name, last, phone FROM Customers WHERE last <> Joaquin
+:sql
+#sql:
+  #SELECT name, last, phone FROM Customers WHERE name > 'john'
+#:sql
 print '----------------------------------------------------------------------------'
 
 print
