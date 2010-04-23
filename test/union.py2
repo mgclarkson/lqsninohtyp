@@ -56,11 +56,15 @@ sql:
   SELECT name, last FROM Customers
   UNION
   SELECT name, last FROM new_Customers
-  
+:sql
+
+list = sql:
   SELECT name, last, phone FROM Customers
   UNION
   SELECT name, last, phone FROM new_Customers
-  
+:sql
+print list
+#sql:  
   SELECT last, name FROM Customers
   UNION
   SELECT last, name FROM new_Customers

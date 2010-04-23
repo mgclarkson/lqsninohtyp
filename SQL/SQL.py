@@ -78,14 +78,7 @@ class SQL:
                     ret.append(trple2)
      
                 x = ", ".join(map(str, ret))
-                s = '[' + x + ']'              
-                print s
-                ##
-          		## TODO: do we need to do something else with this s?  
-          		## 
-          		##
-          		##
-          		##
+                s = '[' + x + ']'       
         elif join_union_case == 'INNER' or join_union_case == 'LEFT' or join_union_case == 'RIGHT' or join_union_case == 'FULL':
           s = joins(self)
         parent.python += s
