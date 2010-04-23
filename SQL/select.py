@@ -16,7 +16,7 @@ def select(self):
   
   re13='(^WHERE)'	# Word 1
   re53='(.?.?)'	# Variable Name 2
-  re43='((?:[a-z0-9_]*))'	# Variable Name 1
+  re43='((\()?(\'?([a-z0-9_])+\'?)((,)\s+(\'?([a-z0-9_])+\'?))*(\))?)'	# Variable Name 1
   
   re14='(^ORDER)'	# Word 1
   re24='(BY)'	# Word 1
@@ -101,15 +101,13 @@ def select(self):
                 # If we're looking at the triple that decides the comparison:
                 if trple[1] == comparison_fieldname:
                   # Use python to evaluate the comparison
-                  if operator == 'IN'
-                    print 'in'
-                    print 
-                    #for trple in self.database['triples']:
-                      #if trple[1] == comparison_fieldname:
-                        #if value in eval(('Matthew', 'Joaquin')):
-                  elif operator == 'BETWEEN'
+                  if operator == 'IN':
+                    if trple[1] == comparison_fieldname:
+                      if trple[2] in eval(value):      
+                         row_results[recordNum].append(trple[2])
+                  elif operator == 'BETWEEN':
                     print 'between'
-                  elif operator == 'LIKE'
+                  elif operator == 'LIKE':
                     raise NameError('SQL: Statement incorrect or not yet supported:\n' + self.sql_insert)
                   elif eval(str(trple[2]) + ' ' + operator + ' ' +  str(value)):
                     # The comparison is allowed, so continue to add data
