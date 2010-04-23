@@ -35,12 +35,10 @@
 ##    ALTER TABLE -M
 ##    UPDATE -M
 ##    DELETE -M
-##    JOINS(4) -M'll do
+##    JOIN -M'll do
 ##    UNION -M
-##    WHERE (AND | OR) in WHERE -M'll do
 ##    ORDER BY in SELECT -J
 ##    TOP in SELECT -J'll do
-##    LIKE in WHERE -M'll do
 ##    IN in WHERE -M'll do
 ##    BETWEEN in WHERE -M'll do
 ##    WILDCARDS? in WHERE
@@ -63,6 +61,7 @@
 ##  NOT IMPLEMETING:
 ##    CREATE DB
 ##    DATES()
+##    LIKE in WHERE
 ##    
 ##  NOTES:
 ##  Between, In, and Like SQL operators are not yet implemented in WHERE.
