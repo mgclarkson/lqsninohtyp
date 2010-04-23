@@ -103,6 +103,10 @@ def select(self):
                   # Use python to evaluate the comparison
                   if operator == 'IN'
                     print 'in'
+                    print 
+                    #for trple in self.database['triples']:
+                      #if trple[1] == comparison_fieldname:
+                        #if value in eval(('Matthew', 'Joaquin')):
                   elif operator == 'BETWEEN'
                     print 'between'
                   elif operator == 'LIKE'
