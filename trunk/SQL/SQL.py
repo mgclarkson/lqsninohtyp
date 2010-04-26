@@ -86,8 +86,6 @@ class SQL:
         truncate(self)
       elif (case == 'DELETE'):
         delete(self)
-      elif (case == 'JOINS'):
-        joins(self)
       elif (case == 'UPDATE'):
         update(self)
       elif (case == 'PRINT'):
