@@ -1,7 +1,7 @@
 =======================================================
 #####################
 ### Original Python2 File:
-### select.py  
+### select.py2  
 #####################  
   
 #!/usr/bin/env python2.py
@@ -39,8 +39,26 @@ sql:
   SELECT name, last, phone FROM Customers WHERE phone > 6001234
 :sql
 sql:
+  SELECT name, last, phone FROM Customers WHERE phone < 7735647
+:sql
+sql:
   SELECT name, last, phone FROM Customers WHERE phone <> 7735647
 :sql
+sql:
+  SELECT name, last, phone FROM Customers WHERE phone <= 7735647
+:sql
+sql:
+  SELECT name, last, phone FROM Customers WHERE phone >= 7735647
+:sql
+sql:
+  SELECT name, last, phone FROM Customers WHERE phone IN (7735647, 5123789, 9875643)
+:sql
+#sql:
+  #SELECT name, last, phone FROM Customers WHERE last <> Joaquin
+#:sql
+#sql:
+  #SELECT name, last, phone FROM Customers WHERE name > 'john'
+#:sql
 print '----------------------------------------------------------------------------'
 
 print
@@ -94,7 +112,13 @@ print 'Not the output window.'
 [['Phil'], ['Matthew'], ['Joaquin']]
 [['Phil', 'Cannata', 7735647], ['Matthew', 'Clarkson', 9875643], ['Joaquin', 'Casares', 3451878], ['Joaquin', 'Joaquin', 9345879], ['Joaquin', 'Joaquin', 5123789], ['Joaquin', 'Guadalupe', 8845748]]
 [['Phil', 'Cannata', 7735647], ['Matthew', 'Clarkson', 9875643], ['Joaquin', 'Joaquin', 9345879], ['Joaquin', 'Guadalupe', 8845748]]
+[['Joaquin', 'Casares', 3451878], ['Joaquin', 'Joaquin', 5123789]]
 [['Matthew', 'Clarkson', 9875643], ['Joaquin', 'Casares', 3451878], ['Joaquin', 'Joaquin', 9345879], ['Joaquin', 'Joaquin', 5123789], ['Joaquin', 'Guadalupe', 8845748]]
+[['Phil', 'Cannata', 7735647], ['Joaquin', 'Casares', 3451878], ['Joaquin', 'Joaquin', 5123789]]
+[['Phil', 'Cannata', 7735647], ['Matthew', 'Clarkson', 9875643], ['Joaquin', 'Joaquin', 9345879], ['Joaquin', 'Guadalupe', 8845748]]
+[['Phil', 'Cannata', 7735647], ['Matthew', 'Clarkson', 9875643], ['Joaquin', 'Casares'], ['Joaquin', 'Joaquin'], ['Joaquin', 'Joaquin', 5123789], ['Joaquin', 'Guadalupe']]
+#
+#
 print '----------------------------------------------------------------------------'
 
 print
