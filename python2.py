@@ -125,12 +125,12 @@ class Python2:
     # Check command line arguments
     arg = sys.argv[1:]
     if len(arg) == 0 or len(arg) > 2:
-      print 'Usage: \tsqlpython.py inputFile [converted_output_file]'
-      print '\tsqlpython.py --console'
+      print 'Usage: \tpython2.py inputFile [converted_output_file]'
+      print '\tpython2.py --console'
       print
       print 'Linux (additional):'
-      print '\t"code" | sqlpython.py'
-      print '\tsqlpython.py < file'
+      print '\t"code" | python2.py'
+      print '\tpython2.py < file'
       print
       print 'Run setup.py in Linux to allow for automatic file execution. \n(For code in the same directory as python2.py.)'
       return
